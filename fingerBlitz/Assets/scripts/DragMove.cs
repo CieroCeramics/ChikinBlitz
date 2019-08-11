@@ -10,7 +10,7 @@ public class DragMove : MonoBehaviour, IPointerDownHandler
     public GameManager gameManager;
     public GameObject thumbStop;
     
-    public bool firsttouch = false;
+    //public bool firsttouch = false;
     private Vector3 touchPosition;
     private Rigidbody2D rb;
     private Vector2 direction;
@@ -29,7 +29,7 @@ public class DragMove : MonoBehaviour, IPointerDownHandler
         Time.timeScale = 1f;
         
         lineRenderer = GetComponent<LineRenderer>();
-        firsttouch = false;
+        //firsttouch = false;
         addPhysics2DRaycaster();
         rb = GetComponent<Rigidbody2D>();
         
@@ -49,7 +49,7 @@ public class DragMove : MonoBehaviour, IPointerDownHandler
         thumbStop.transform.position = transform.position;
         if ((Input.touchCount > 0) || (Input.GetMouseButtonDown(1)))
         {
-            
+            GameManager.gameSpeed = 1;
             StopCoroutine(SlowDown());
             Touch touch = Input.GetTouch(0);
             if(touch.phase==TouchPhase.Began)
@@ -73,10 +73,10 @@ public class DragMove : MonoBehaviour, IPointerDownHandler
                 
                 
                 StopCoroutine(ZoomTo());
-                firsttouch = true;
+                //firsttouch = true;
                
                  
-                GameManager.gameSpeed = 1;//;lgameManager.maxGameSpeed;
+                //;lgameManager.maxGameSpeed;
                 if (Path.Count > 0)
                 {
 
@@ -317,7 +317,12 @@ public class DragMove : MonoBehaviour, IPointerDownHandler
             //StartCoroutine(gameManager.screenPulse());
            
             gameManager.gobackyn = false;
-            gameManager.Finished("alive", gameManager.Win, gameManager.nextLevl);
+            if (other.contacts[0].otherCollider.transform.gameObject.name == "trysmt")
+            {
+                Physics2D.IgnoreCollision(thumbStop.GetComponentInChildren<Collider2D>(), other.gameObject.GetComponent<Collider2D>());
+
+                gameManager.Finished("alive", gameManager.Win, gameManager.nextLevl);
+            }
             
         }
 

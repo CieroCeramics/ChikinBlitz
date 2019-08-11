@@ -8,16 +8,18 @@ public class SceneTransition : MonoBehaviour
     void Awake()
     {
         int stagenum = GameControl.control.Stage;
+        GameControl.control.numUnlockedStages++;
         //if(GameControl.control.stagedata == null)
         if (GameControl.control.stagedata == null)
         {
             GameControl.control.stagedata = new List<Stage>();
+            
             GameControl.control.lives = 3;
         }
         //  GameControl.control.stagedata = new List<Stage>();
 
         GameControl.control.stagedata.Add(new Stage());
-
+        
        // GameControl.control.stagedata[GameControl.control.Stage].levelCap = getLevlcap(GameControl.control.Stage);
         //switch (stagenum)
         //{
@@ -33,13 +35,15 @@ public class SceneTransition : MonoBehaviour
         //}
 
         GameControl.control.stagedata[GameControl.control.Stage].levels = new List<Level>();
+        GameControl.control.stagedata[GameControl.control.Stage].levels.Clear();
         // GameControl.control.Stage++;
          
        // loadNextScene();
     }
     private void Start()
     {
-        LevelSelect.lSelect.AddStage(GameControl.control.stagedata[GameControl.control.Stage]);
+        
+        // LevelSelect.lSelect.AddStage(GameControl.control.stagedata[GameControl.control.Stage]);
 
         Invoke("loadNextScene", 7);
     }
@@ -53,7 +57,7 @@ public class SceneTransition : MonoBehaviour
     // Update is called once per frame
     void loadNextScene()
     {
-       
+        LevelSelect.lSelect.AddStage(GameControl.control.Stage );
         GameControl.control.doGenerateNextLevel = true;
         SceneManager.LoadScene("Board");
     }

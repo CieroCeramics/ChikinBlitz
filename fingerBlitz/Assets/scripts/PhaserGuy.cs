@@ -18,29 +18,34 @@ public class PhaserGuy : GuyBehavior
     // Update is called once per frame
     void FixedUpdate()
     {
-        transform.Rotate(0, 0, spin*GameManager.gameSpeed);
+        transform.Rotate(0, 0, spin);
         
     }
 
 
-
+    
     IEnumerator Phasers1(float dir)
     {
-
+        int k = 0;
         while (true)
         {
+
+            k++;
             spin = 2*GameManager.gameSpeed;
-            playa = GameObject.FindGameObjectWithTag("Player");
+           
             Bullet bulletCopy;
+
+
+            int WT = (int)(1 / (GameManager.gameSpeed) * fireRate);
             
-            if ((playa.GetComponent<DragMove>().firsttouch == true) && GameManager.gameSpeed > 0.1f)
+            if (k >= WT && GameManager.gameSpeed>0)
             {
-                
-                    bulletCopy = Instantiate(bulletPrefab, transform.position, transform.rotation * (Quaternion.Euler(0, 0, dir)));
-                    bulletCopy.speed = 0.02f;
-                
+                k = 0;
+                bulletCopy = Instantiate(bulletPrefab, transform.position, transform.rotation * (Quaternion.Euler(0, 0, dir)));
+                bulletCopy.speed = 0.02f;
+
             }
-            yield return WaitFor.Frames((int)((1 / GameManager.gameSpeed )*fireRate ));
+            yield return new WaitForFixedUpdate();// WaitFor.Frames((int)((1 / GameManager.gameSpeed )*fireRate ));
         }
 
     }
@@ -52,8 +57,8 @@ public class PhaserGuy : GuyBehavior
             spin = 0.5f;
             playa = GameObject.FindGameObjectWithTag("Player");
             Bullet bulletCopy;
-            yield return new WaitForSeconds(fireRate/ GameManager.gameSpeed);
-            if ((playa.GetComponent<DragMove>().firsttouch == true)&& GameManager.gameSpeed > 0)
+            yield return null;//new WaitForSeconds(fireRate/ GameManager.gameSpeed);
+            if ( GameManager.gameSpeed > 0)
             {
 
                 bulletCopy = Instantiate(bulletPrefab, transform.position, transform.rotation * (Quaternion.Euler(0, 0, 90)));

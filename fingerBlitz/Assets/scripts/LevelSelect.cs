@@ -13,6 +13,8 @@ public class LevelSelect : MonoBehaviour
     Queue<Button> inactivebuttons = new Queue<Button>();
     private void Awake()
     {
+        
+        mystage = GameControl.control.Stage;
         if (lSelect == null)
         {
             DontDestroyOnLoad(gameObject);
@@ -57,6 +59,7 @@ public class LevelSelect : MonoBehaviour
             {
                 Level level = GameControl.control.stagedata[stagenum].levels[i];
                 button.onClick.AddListener(delegate { loadSelectedLevel(level); });
+                button.GetComponentInChildren<Text>().text = level.number.ToString();
                 button.interactable = true;
                // inactivebuttons.Dequeue();
                 i++;
@@ -70,10 +73,10 @@ public class LevelSelect : MonoBehaviour
         int i = 0;
 
         //foreach (Stage stage in GameControl.control.stagedata)
-        for (int f = 0; f <= GameControl.control.Stage; f++)
+        for (int f = 0; f < GameControl.control.numUnlockedStages; f++)
         {
             StagePanel[f].SetActive(true);
-            scanButtons(f);
+            //scanButtons(f);
             //i++;
 
         }
@@ -84,35 +87,25 @@ public class LevelSelect : MonoBehaviour
 
 
 
-
-
-
-
-    
-
-
-
-
-
-
-
-    public void AddStage(Stage stage)
+    public void AddStage(int stage)
     {
-        for (int j = 0; j < stage.levelCap; j++)
+        StagePanel[stage].SetActive(true);
+        foreach (Button butt in StagePanel[stage].GetComponentsInChildren<Button>())
         {
-            Button levelButtonClone;
-            levelButtonClone = Instantiate(LevelButton, StagePanel[mystage].gameObject.transform);
-            levelButtonClone.interactable = false;
-            inactivebuttons.Enqueue(levelButtonClone);
+            inactivebuttons.Enqueue(butt);
+            butt.interactable = false;
         }
+       
     }
 
 
     public void AddButton(Level level)
     {
-        Button levelButtonClone;
-        levelButtonClone = Instantiate(LevelButton, StagePanel[mystage].gameObject.transform);
-        levelButtonClone.onClick.AddListener(delegate { loadSelectedLevel(level); });
+        Button levelButtonClone = inactivebuttons.Dequeue();
+          levelButtonClone.onClick.AddListener(delegate { loadSelectedLevel(level); });
+
+        levelButtonClone.GetComponentInChildren<Text>().text = level.number.ToString();
+        levelButtonClone.interactable = true;// = Instantiate(LevelButton, StagePanel[mystage].gameObject.transform);
 
     }
     private void OnEnable()

@@ -12,6 +12,7 @@ public class GameControl : MonoBehaviour
     public List<GameObject> mazeContainer;
     public bool tutorialMode;
 
+    public int numUnlockedStages =0;
     public int LevelNumber;
     public int Stage;
     public int lives;

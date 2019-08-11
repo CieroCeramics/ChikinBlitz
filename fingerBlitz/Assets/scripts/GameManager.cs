@@ -61,6 +61,7 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        gameSpeed= 0;
         LevelSelect.lSelect.gameObject.SetActive(false);
         if (GameControl.control.stagedata.Count == 0)
         {
@@ -431,6 +432,7 @@ public class GameManager : MonoBehaviour
             i++;
         }
         GameControl.control.stagedata[GameControl.control.Stage].levels.Add(thisLevel);
+       // LevelSelect.lSelect.AddButton(thisLevel);
     }
     public void Died(int lives)
     {
@@ -519,13 +521,14 @@ public class GameManager : MonoBehaviour
         }
         else if (goback == false)
         {
+            GameControl.control.Save();
+            GameControl.control.doGenerateNextLevel = true;
             if (GameControl.control.LevelNumber == 10)
             {
                 GameControl.control.Stage++;
                 SceneManager.LoadScene("TransitionScene");
             }
-            GameControl.control.Save();
-            GameControl.control.doGenerateNextLevel = true;
+           
             SceneManager.LoadScene("Board");
             
         }

@@ -11,11 +11,10 @@ public class LaserGuy : GuyBehavior
    // private LineRenderer lineRenderer;
     public Transform LaserHit;
     // Start is called before the first frame update
-    public ParticleSystem particles;
-    public ParticleSystem particles2;
+
     Animator Anim;//= GetComponentInChildren<Animator>();
     //gameSpeed =1;
-    void Start()
+    void Awake()
     {
         playa = GameObject.FindGameObjectWithTag("Player");
         Anim = GetComponentInChildren<Animator>();
@@ -29,7 +28,7 @@ public class LaserGuy : GuyBehavior
     }
     private void OnBecameInvisible()
     {
-        StopCoroutine(Lasers());
+        //StopCoroutine(Lasers());
     }
     // Update is called once per frame
     void Update()
@@ -37,7 +36,7 @@ public class LaserGuy : GuyBehavior
         //gameSpeed = GameObject.FindGameObjectWithTag("Player").GetComponent<DragMove>().gameSpeed;
     }
 
-
+    int k = 0;
     IEnumerator Lasers()
     {
         
@@ -47,17 +46,16 @@ public class LaserGuy : GuyBehavior
         float t = 0;
         // yield WaitforSeconds(1);
         //ParticleSystem.
-        ParticleSystem.EmissionModule em = particles.emission;
-        while (GameManager.gameSpeed>0)
+        //ParticleSystem.EmissionModule em = particles.emission;
+        while (true)
         {
-
+    
             if (status >= 4) { status = 1; }
             Anim.speed = GameManager.gameSpeed;
             // em.rate ;
             //  lineRenderer.startColor = linecolor;
             //  lineRenderer.endColor = linecolor;
-            if (playa.GetComponent<DragMove>().firsttouch == true)
-            {
+            
 
                 // yield return new WaitForSeconds(0.5f);
                 int screenlayer = LayerMask.NameToLayer("Screen");
@@ -98,12 +96,14 @@ public class LaserGuy : GuyBehavior
 
                         case 2://fire
                         Anim.SetBool("Fire", true);
-                        
+                    k++;
                         //Anim.speed = 0;
                         t = 0;
                             Bullet bulletCopy;
-                        if (GameManager.gameSpeed >= 0.1f)
+                    int WT = (int)(1 / (GameManager.gameSpeed));
+                    if (k >= WT||GameManager.gameSpeed==1) // GameManager.gameSpeed >= 0.1f)
                         {
+                        k = 0;
                             bulletCopy = Instantiate(bulletPrefab, transform.position, transform.rotation);
                             bullets.Add(bulletCopy);
                             bulletCopy.speed = 0.1f;
@@ -149,13 +149,14 @@ public class LaserGuy : GuyBehavior
                 
                 //yield return WaitFor.Frames (waittime);
                 //print("waotot" + waittime);
-            }
+            
 
 
-            int WT = (int)(1 / (GameManager.gameSpeed + 1));
-           // yield return new WaitForSeconds(WT);
-            yield return WaitFor.Frames(WT);
-            print("waotot" + WT);
+            
+            // yield return new WaitForSeconds(WT);
+
+            yield return null;// WaitFor.Frames(WT);
+            //print("waotot" + WT);
           
 
         }
