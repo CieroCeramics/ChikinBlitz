@@ -367,15 +367,11 @@ public class AdventureManager : GameManager
 
 
 
-    public override void loadLevel(bool goback)
+    public override void loadLevel(Level leveltoload)
     {
 
-        goback = gobackyn;
-        if (goback)
-        {
-            reloadLevel();
-        }
-        else if (goback == false) SceneManager.LoadScene("AdventureBoard");
+        
+       SceneManager.LoadScene("AdventureBoard");
 
     }
     //public void reloadLevel()

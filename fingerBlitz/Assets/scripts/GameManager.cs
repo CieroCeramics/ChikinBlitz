@@ -22,11 +22,11 @@ public class GameManager : MonoBehaviour
     public static float gameSpeed = 1f;
     public int maxGameSpeed = 1;
     public bool gobackyn;
-    public bool destroyAllBullets;
+    //public bool destroyAllBullets;
 
     public GameObject startScroll;
     public GameObject key;
-    public GameObject next;
+    public GameObject levelCard;
     public GameObject start;
     public GameObject end;
     public GameObject player;
@@ -51,8 +51,8 @@ public class GameManager : MonoBehaviour
     int timestouched = 0;
     Vector2 zoomPoint;
     public Partitions.Sector StartSector = new Partitions.Sector();
-
-    Level thisLevel;// = new Level();
+    public bool itsoverman = false;
+    public Level thisLevel;// = new Level();
     // Start is called before the first frame update
     private void Awake()
     {
@@ -61,7 +61,9 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        gameSpeed= 0;
+        thisLevel = GameControl.control.leveltoLoad;
+        GameControl.control.LevelNumber = thisLevel.number;
+        gameSpeed = 0;
         LevelSelect.lSelect.gameObject.SetActive(false);
         if (GameControl.control.stagedata.Count == 0)
         {
@@ -86,79 +88,46 @@ public class GameManager : MonoBehaviour
         open = true;
         StartCoroutine(OpenCloseInfo());
         gameLayout = new Partitions(Maze.xSize,Maze.ySize, screenSize);
-        //gameLayout.xPartitions = 1 + complexity;
-        //gameLayout.yPartitions = 2 + complexity;
-        gameLayout.createSectors();
-        //for (int i = 0; i < gameLayout.sectors.Length; i++) 
-        //{
 
-        //}
-        if (GameControl.control.doGenerateNextLevel)
-        {
-            GameControl.control.LevelNumber++;
-            thisLevel = new Level();
-            newSeed();
-        }
-        else oldSeed();
-        print(GameControl.control.LevelNumber + " " + thisLevel.number);
-        //Instantiate(key, gameLayout.RandomWalk(StartSector).centroid, transform.rotation);
+        gameLayout.createSectors();
+
+        Random.InitState(thisLevel.randomSeed);
+        CreateStartAndFinish();
+
+
+
+        CreateGuys();
+
+        Instantiate(key, StartSector.centroid, transform.rotation);
+        CreateUpgrade();
+
+        thisLevel.number = GameControl.control.LevelNumber;
+   
+
         player.transform.position = start.transform.position;
-        //Vector2 pos = gameLayout.RandomWalk(StartSector).centroid;
-        
+
        
         OpenTutorial(player, ("this is the Chicken, tap and move your finger to control it"));
        
         StartCoroutine(LevelInfoScroll());
 
-        //Vector2.lerp
     }bool doStartScroll = true;
   
-    void newSeed()
+    void newLevel()
     {
+
         //thisLevel.start = new Ve;
-        thisLevel.Maze = new MazeContainer();
-        thisLevel.Maze.walls = new List<Wall>();
+        // thisLevel.Maze = new MazeContainer();
+        //thisLevel.Maze.walls = new List<Wall>();
         //thisLevel.Maze = new Maze();
-        CreateStartAndFinish();
-
-        //  difficultySeed = 2;
         
-        CreateGuys();
-        
-        Instantiate(key, StartSector.centroid, transform.rotation);
-        CreateUpgrade();
-        //GameObject[] MazeWalls = GetComponent<Maze>().wallHolder.GetComponentsInChildren<GameObject>().;
-        
-
-
-        //thisLevel.Maze= GetComponent<Maze>().wallHolder;
-        thisLevel.number = GameControl.control.LevelNumber;
-        //foreach (GameObject wall in GetComponent<Maze>().wallHolder.GetComponentsInChildren<GameObject>())
-        //{
-        //    wall.transform.parent = thisLevel.Maze.transform;
-        //}
-        GameControl.control.mazeContainer.Add(GetComponent<Maze>().wallHolder);
         
     }
     void oldSeed()
     {
-
+        Random.InitState(thisLevel.randomSeed);
         //Level thislevel = new Level();
-            thisLevel=GameControl.control.leveltoLoad;
-        start.transform.position = new Vector2(GameControl.control.leveltoLoad.start.x, GameControl.control.leveltoLoad.start.y);// new Vector2(thisLevel.start.x, thislevel.start.y);
-        end.transform.position = new Vector2(GameControl.control.leveltoLoad.finish.x, GameControl.control.leveltoLoad.finish.y);//new Vector2(thisLevel.finish.x, thislevel.finish.y);
-       foreach (SerializableVector2 pg in thisLevel.pguys)
-        {
-            Instantiate(pGuy, new Vector2(pg.x, pg.y), Quaternion.identity);
-        }
-        foreach (SerializableVector2 lg in thisLevel.lguys)
-        {
-            Instantiate(lGuy, new Vector2(lg.x, lg.y), Quaternion.identity);
-        }
-        //foreach (GameObject thing in GameControl.control.leveltoLoad.p)
-        //{
-        //    Instantiate(thing);
-        //}
+       
     }
     IEnumerator LevelInfoScroll()
         
@@ -277,10 +246,10 @@ public class GameManager : MonoBehaviour
     void CreateGuys()
     {
         
-        thisLevel.lguys = new List<SerializableVector2>();
-        thisLevel.lguys.Clear();
-        thisLevel.pguys = new List<SerializableVector2>();
-        thisLevel.pguys.Clear();
+       // thisLevel.lguys = new List<SerializableVector2>();
+       // thisLevel.lguys.Clear();
+       // thisLevel.pguys = new List<SerializableVector2>();
+       // thisLevel.pguys.Clear();
         float g = Random.value;
        
         
@@ -300,14 +269,14 @@ public class GameManager : MonoBehaviour
                     Partitions.Sector spot = new Partitions.Sector();
                     spot = checknplace(lGuy.gameObject);
                     Instantiate(lGuy, spot.centroid, Quaternion.identity);
-                    thisLevel.lguys.Add(spot.centroid);
+                    //thisLevel.lguys.Add(spot.centroid);
                 }
                 else
                 {
                     Partitions.Sector spot = new Partitions.Sector();
                     spot = checknplace(pGuy.gameObject);
                     Instantiate(pGuy, spot.centroid, Quaternion.identity);
-                    thisLevel.pguys.Add(spot.centroid);
+                  //  thisLevel.pguys.Add(spot.centroid);
                 }
             }
         }
@@ -339,16 +308,16 @@ public class GameManager : MonoBehaviour
         StartSector = checknplace(start);
         end.GetComponent<Finish>().sectors.Enqueue(StartSector);
         start.transform.position = StartSector.centroid;
-        thisLevel.start = new Vector2(start.transform.position.x, start.transform.position.y);
+       // thisLevel.start = new Vector2(start.transform.position.x, start.transform.position.y);
         //print("finish");
         Partitions.Sector endsect = checknplace(end);
         end.GetComponent<Finish>().createPath(0, end.GetComponent<Finish>().sectors);
-        print(endsect.distance);
+//        print(endsect.distance);
         //endsect = checknplace(end);
             
         
         end.transform.position = endsect.centroid;
-        thisLevel.finish = new Vector2( end.transform.position.x, end.transform.position.y);
+       // thisLevel.finish = new Vector2( end.transform.position.x, end.transform.position.y);
         //  Instantiate(end, new Vector2(Random.Range(-1.7f, 3.7f), Random.Range(-3.5f, 6.5f)), transform.rotation);
         //start.transform.position = gameLayout.sectors[Random.Range(1, gameLayout.sectors.Length)].centroid; //Randomer();
 
@@ -406,54 +375,118 @@ public class GameManager : MonoBehaviour
         }
 
     }
-    void storeWallsandLevel()
-    {
-        GameObject walhold = GetComponent<Maze>().wallHolder;
-        int i = 0;
-        foreach (Transform wall in walhold.GetComponentsInChildren<Transform>())
-        {
-            Wall wally = new Wall();
-            wally.position = new Vector2(wall.position.x, wall.position.y);
-            wally.rotation = wall.rotation.eulerAngles;
-            wally.scale = new Vector2( wall.localScale.x, wall.localScale.y);
-            if (wall.gameObject.tag == "wall")
-            {
-                wally.type = 1;
-            }
-            if (wall.gameObject.tag == "spikes")
-            {
-                wally.type = 2;
-            }
-            if (wall.gameObject.tag == "lock")
-            {
-                wally.type = 3;
-            }
-            thisLevel.Maze.walls.Add(wally);
-            i++;
-        }
-        GameControl.control.stagedata[GameControl.control.Stage].levels.Add(thisLevel);
-       // LevelSelect.lSelect.AddButton(thisLevel);
-    }
+    //void storeWallsandLevel()
+    //{
+    //    GameObject walhold = GetComponent<Maze>().wallHolder;
+    //    int i = 0;
+    //    foreach (Transform wall in walhold.GetComponentsInChildren<Transform>())
+    //    {
+    //        Wall wally = new Wall();
+    //        wally.position = new Vector2(wall.position.x, wall.position.y);
+    //        wally.rotation = wall.rotation.eulerAngles;
+    //        wally.scale = new Vector2( wall.localScale.x, wall.localScale.y);
+    //        if (wall.gameObject.tag == "wall")
+    //        {
+    //            wally.type = 1;
+    //        }
+    //        if (wall.gameObject.tag == "spikes")
+    //        {
+    //            wally.type = 2;
+    //        }
+    //        if (wall.gameObject.tag == "lock")
+    //        {
+    //            wally.type = 3;
+    //        }
+    //        //thisLevel.Maze.walls.Add(wally);
+    //        i++;
+    //    }
+    //    GameControl.control.stagedata[GameControl.control.Stage].levels.Add(thisLevel);
+    //   // LevelSelect.lSelect.AddButton(thisLevel);
+    //}
     public void Died(int lives)
     {
         
     }
-    public void Finished(string state, Sprite script, Sprite keepPlaying)
+    public enum FinishState
     {
+        DEAD, ALIVE, GAMEOVER
+    };
+    Level nextLevel()
+    {
+        return GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum].levels[(thisLevel.number+1)%5];
+    }
+    public void Finished( FinishState FS, Sprite script, Sprite keepPlaying)
+    {
+        itsoverman = true;
+        //print("THIS +RIUGH HERE" + GameControl.control.stagedata[GameControl.control.Stage].levels.Count + " : " + thisLevel.number);
         gameSpeed = 0;
-        if (GameControl.control.doGenerateNextLevel)
+        int s = GameControl.control.stagedata[GameControl.control.Stage].highestReachedLevel;
+        int p = thisLevel.number;
+        bool DGNL = p + 1 > s ? true:false ;
+        print("current phase:" + GameControl.control.phasenum + " max phases" + LevelSelect.lSelect.phase[GameControl.control.Stage].intArray.Length);
+
+        switch (FS)
         {
-            storeWallsandLevel();
-            LevelSelect.lSelect.AddButton(thisLevel);
+            case FinishState.ALIVE:
+
+                if (LevelSelect.lSelect.inactivebuttons.Count != 0)
+                {
+                    if (DGNL)
+                    {
+                        GameControl.control.stagedata[GameControl.control.Stage].highestReachedLevel = nextLevel().number;
+                        LevelSelect.lSelect.AddButton(nextLevel());
+
+                        GameControl.control.leveltoLoad = nextLevel();
+                        // GameControl.control.seedToLoad = thisLevel.randomSeed++;
+                    }
+
+                }
+                else
+                {
+                    GameControl.control.phasenum++;
+                    if (GameControl.control.phasenum < LevelSelect.lSelect.phase[GameControl.control.Stage].intArray.Length)
+                    {
+
+                        GameControl.control.stagedata[GameControl.control.Stage].highestReachedLevel++;
+
+                        LevelSelect.lSelect.addPhase(GameControl.control.phasenum, GameControl.control.Stage);
+                        GameControl.control.leveltoLoad = nextLevel();
+                        LevelSelect.lSelect.AddButton(GameControl.control.leveltoLoad);
+                        // GameControl.control.stagedata[GameControl.control.Stage].highestReachedLevel = nextLevel().number;
+
+                    }
+
+                    else
+                    {
+                        GameControl.control.Stage++;
+                        SceneManager.LoadScene("TransitionScene");
+                    }
+                }
+                break;
+            case FinishState.DEAD:
+                
+                GameControl.control.leveltoLoad = thisLevel;
+                break;
+            case FinishState.GAMEOVER:
+                GameControl.control.stagedata[GameControl.control.Stage].highestReachedLevel -= 5;
+                LevelSelect.lSelect.addPhase(GameControl.control.phasenum, GameControl.control.Stage);
+                GameControl.control.leveltoLoad = GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum].levels[0];
+                LevelSelect.lSelect.AddButton(GameControl.control.leveltoLoad);
+                Invoke("GameOverCountdown", 3);
+                break;
+
         }
-        next.gameObject.SetActive(true);
+
+        
+       
+        levelCard.gameObject.SetActive(true);
         // next.GetComponentInChildren<Text>().text = outcome;
         //next.GetComponentInChildren<Image>().sprite = tex;
-        destroyAllBullets = true;
+       // destroyAllBullets = true;
         int min = (int)Time.time / 60;
         int sec = (int)Time.time % 60;
-        next.GetComponentInChildren<Text>().text = "Time:  " + min.ToString()+":"+sec.ToString() + "\n Score:  000000";
-        foreach (Image img in next.GetComponentsInChildren<Image>())
+        levelCard.GetComponentInChildren<Text>().text = "Time:  " + min.ToString()+":"+sec.ToString() + "\n Score:  000000";
+        foreach (Image img in levelCard.GetComponentsInChildren<Image>())
         {
             
             if (img.tag == "timeStop")
@@ -475,26 +508,29 @@ public class GameManager : MonoBehaviour
             if (img.tag == "winloseButton")
             {
                 img.sprite = keepPlaying;
+                //Level lv = GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum]
+                img.gameObject.GetComponent<Button>().onClick.AddListener(() => loadLevel(GameControl.control.leveltoLoad));
             }
             if (img.tag == "livesFront")
             {
-                if (state == "alive")
+                if (FS == FinishState.ALIVE)
                 {
                     img.GetComponentInChildren<Text>().text = GameControl.control.lives.ToString();
                     img.GetComponent<Rigidbody2D>().gravityScale = 0;
 
                 }
-                else if (state == "dead")
+                else if (FS == FinishState.DEAD)
                 {
+
                     img.GetComponentInChildren<Text>().text = (GameControl.control.lives + 1).ToString();
                     img.GetComponent<Animator>().Play("paper", 0, 0);
                     img.GetComponent<Rigidbody2D>().gravityScale = 1;
 
                 }
-                else if(state =="GO")
-                {
-                    Invoke ("GameOverCountdown", 3);
-                }
+                //else if(FS == FinishState.GAMEOVER)
+                //{
+                //    Invoke ("GameOverCountdown", 3);
+                //}
             }
             if (img.tag == "livesBack")
             {
@@ -510,39 +546,33 @@ public class GameManager : MonoBehaviour
         LevelSelect.lSelect.gameObject.SetActive(true);// levelSelector.SetActive(true);
     }
 
-    public virtual void loadLevel(bool goback)
+    public virtual void loadLevel(Level leveltoload)
     {
         gameSpeed = 1;
-        goback = gobackyn;
-        if (goback)
-        {
-         
-            reloadLevel();
-        }
-        else if (goback == false)
-        {
-            GameControl.control.Save();
-            GameControl.control.doGenerateNextLevel = true;
-            if (GameControl.control.LevelNumber == 10)
-            {
-                GameControl.control.Stage++;
-                SceneManager.LoadScene("TransitionScene");
-            }
-           
-            SceneManager.LoadScene("Board");
+
+        //leveltoload = GameControl.control.leveltoLoad;
+        //seed = GameControl.control.seedToLoad;
+        GameControl.control.leveltoLoad = leveltoload;
+        GameControl.control.Save();
+        //GameControl.control.doGenerateNextLevel = true;
+        SceneManager.LoadScene("Board");
             
-        }
+        
+    }
+    void newphase(int num)
+    {
+        LevelSelect.lSelect.addPhase(num, GameControl.control.Stage);
     }
     public void reloadLevel()
     {
         GameControl.control.leveltoLoad =thisLevel;
-        GameControl.control.doGenerateNextLevel = false;
+        //GameControl.control.doGenerateNextLevel = false;
         SceneManager.LoadScene("Board");
 
         player.transform.position = start.transform.position;
-        next.gameObject.SetActive(false);
+        levelCard.gameObject.SetActive(false);
         Time.timeScale = 1f;
-        destroyAllBullets = false;
+        //destroyAllBullets = false;
         player.GetComponent<Animator>().SetBool("Dead", false);
         
     }

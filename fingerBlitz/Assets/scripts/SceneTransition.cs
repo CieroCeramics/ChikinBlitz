@@ -4,12 +4,20 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class SceneTransition : MonoBehaviour
 {
+
+    
     // Start is called before the first frame update
     void Awake()
     {
+
+
+       // foreach( LevelSelect.lSelect.)
         int stagenum = GameControl.control.Stage;
-        GameControl.control.numUnlockedStages++;
-        //if(GameControl.control.stagedata == null)
+        if (stagenum > 0)
+        {
+            GameControl.control.numUnlockedStages++;
+        }
+            //if(GameControl.control.stagedata == null)
         if (GameControl.control.stagedata == null)
         {
             GameControl.control.stagedata = new List<Stage>();
@@ -19,8 +27,8 @@ public class SceneTransition : MonoBehaviour
         //  GameControl.control.stagedata = new List<Stage>();
 
         GameControl.control.stagedata.Add(new Stage());
-        
-       // GameControl.control.stagedata[GameControl.control.Stage].levelCap = getLevlcap(GameControl.control.Stage);
+
+        // GameControl.control.stagedata[GameControl.control.Stage].levelCap = getLevlcap(GameControl.control.Stage);
         //switch (stagenum)
         //{
         //    case 0:
@@ -33,9 +41,12 @@ public class SceneTransition : MonoBehaviour
         //        GameControl.control.stagedata[stagenum].levelCap = 32;
         //        break;
         //}
-
-        GameControl.control.stagedata[GameControl.control.Stage].levels = new List<Level>();
-        GameControl.control.stagedata[GameControl.control.Stage].levels.Clear();
+        GameControl.control.stagedata[GameControl.control.Stage].phases = new List<Phase>();
+        GameControl.control.stagedata[GameControl.control.Stage].highestReachedLevel = 0;
+        
+       
+        
+        LevelSelect.lSelect.addPhase(0,GameControl.control.Stage);
         // GameControl.control.Stage++;
          
        // loadNextScene();
@@ -55,13 +66,20 @@ public class SceneTransition : MonoBehaviour
         else return 0;
     }
     // Update is called once per frame
+    
     void loadNextScene()
     {
+        GameControl.control.phasenum = 0;
         LevelSelect.lSelect.AddStage(GameControl.control.Stage );
-        GameControl.control.doGenerateNextLevel = true;
+      //  LevelSelect.lSelect.addPhase(GameControl.control.phasenum, GameControl.control.Stage);
+        //GameControl.control.phasenum++;
+        //GameControl.control.doGenerateNextLevel = true;
+        GameControl.control.leveltoLoad = GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum].levels[0];
+        LevelSelect.lSelect.AddButton(GameControl.control.leveltoLoad);
         SceneManager.LoadScene("Board");
     }
 
+    
     void decideSceneCap()
     {
 

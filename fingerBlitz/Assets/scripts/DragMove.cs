@@ -38,18 +38,42 @@ public class DragMove : MonoBehaviour, IPointerDownHandler
    
     public bool playerclicked = false;
     bool slowdown = true;
-    private void LateUpdate()
+    private void Update()
     {
-        
+ 
     }
+    Vector2 mouseRelativeOrigin;
     private void FixedUpdate()
     {
+        
+        Vector2 dir;
         float speed = Vector2.Distance(StoredPosition,transform.position) / Time.deltaTime*100000000f;
         
         thumbStop.transform.position = transform.position;
-        if ((Input.touchCount > 0) || (Input.GetMouseButtonDown(1)))
+        if (Input.GetMouseButtonDown(0))
         {
-            GameManager.gameSpeed = 1;
+            mouseRelativeOrigin = Input.mousePosition;
+            print("click");
+            
+        }
+        if (Input.GetMouseButton(0))
+        {
+            print("clickING!!!!!");
+
+            if (!gameManager.itsoverman) { GameManager.gameSpeed = 1; }
+            StopCoroutine(SlowDown());
+            //mouseRelativeOrigin = Input.mousePosition;
+            dir = (new Vector2(Input.mousePosition.x, Input.mousePosition.y) - mouseRelativeOrigin).normalized;
+            transform.Translate(dir*Time.deltaTime*2);
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            slowdown = true;
+            StartCoroutine(SlowDown());
+        }
+            if ((Input.touchCount > 0) )
+        {
+            if (!gameManager.itsoverman) { GameManager.gameSpeed = 1; }
             StopCoroutine(SlowDown());
             Touch touch = Input.GetTouch(0);
             if(touch.phase==TouchPhase.Began)
@@ -315,13 +339,13 @@ public class DragMove : MonoBehaviour, IPointerDownHandler
             // print("hit");
             //Time.timeScale = 0f;
             //StartCoroutine(gameManager.screenPulse());
-           
+            GameManager.gameSpeed = 0;
             gameManager.gobackyn = false;
             if (other.contacts[0].otherCollider.transform.gameObject.name == "trysmt")
             {
                 Physics2D.IgnoreCollision(thumbStop.GetComponentInChildren<Collider2D>(), other.gameObject.GetComponent<Collider2D>());
 
-                gameManager.Finished("alive", gameManager.Win, gameManager.nextLevl);
+                gameManager.Finished(GameManager.FinishState.ALIVE, gameManager.Win, gameManager.nextLevl);
             }
             
         }
@@ -369,7 +393,7 @@ public class DragMove : MonoBehaviour, IPointerDownHandler
                         
                         //Physics.IgnoreCollision(other.gameObject.GetComponent<Collider>(), GetComponent<Collider>());
                         gameManager.gobackyn = true;
-                        
+                        //GameControl.control.seedToLoad = gameManager.thisSeed;
                        
 
                         // reloadLevel();
@@ -381,11 +405,11 @@ public class DragMove : MonoBehaviour, IPointerDownHandler
     }
     public void dotheInvoke()
     {
-        gameManager.Finished("GO", gameManager.GameOver, null);
+        gameManager.Finished(GameManager.FinishState.GAMEOVER, gameManager.GameOver, null);
     }
     void dotheInvoke2()
     {
-        gameManager.Finished("dead", gameManager.Lose, gameManager.restart);
+        gameManager.Finished(GameManager.FinishState.DEAD, gameManager.Lose, gameManager.restart);
     }
     public void OnCollisionExit2D(Collision2D other)
     {

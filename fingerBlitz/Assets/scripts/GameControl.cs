@@ -7,13 +7,15 @@ using System.IO;
 public class GameControl : MonoBehaviour
 {
     public static GameControl control;
-    public bool doGenerateNextLevel = true;
+   // public bool doGenerateNextLevel = true;
     public Level leveltoLoad;
+   // public int seedToLoad;
     public List<GameObject> mazeContainer;
     public bool tutorialMode;
 
-    public int numUnlockedStages =0;
+    public int numUnlockedStages;
     public int LevelNumber;
+    public int phasenum;
     public int Stage;
     public int lives;
     public int flys ,zooms,times, keys;
@@ -100,37 +102,47 @@ class PlayerData
     //}
     //    //public List<GameObject> upgrades;
 }
+
+[Serializable]
+public class Phase
+{
+    public List<Level> levels;
+}
+
 [Serializable]
 public class Stage
 {
-    public List<Level> levels;
-    public int levelCap;
+    public List<Phase> phases;
+    public int highestReachedLevel;
+    
 }
 [Serializable]
 public class Level
 {
+
     public int number;
-    public MazeContainer Maze;
-    public SerializableVector2 start, finish,key;
-    public List<SerializableVector2> lguys;
-    public List<SerializableVector2> pguys;
+    public int randomSeed;
+    //public MazeContainer Maze;
+    //public SerializableVector2 start, finish,key;
+    //public List<SerializableVector2> lguys;
+    //public List<SerializableVector2> pguys;
    // public Vector2 upgrade;
     //public List<GameObject> things;
     //public GameObject start, finish;
 }
-[Serializable]
-public class MazeContainer
-{
-  public  List <Wall> walls;
-}
-[Serializable]
-public class Wall
-{
-   // public Wall(int _type, Vector2 _position, Vector2 _rotation)
-    public int type;
-    public SerializableVector3 rotation;
-    public SerializableVector2 position;
-    public SerializableVector2 scale;
-    //public seriali
+//[Serializable]
+//public class MazeContainer
+//{
+//  public  List <Wall> walls;
+//}
+//[Serializable]
+//public class Wall
+//{
+//   // public Wall(int _type, Vector2 _position, Vector2 _rotation)
+//    public int type;
+//    public SerializableVector3 rotation;
+//    public SerializableVector2 position;
+//    public SerializableVector2 scale;
+//    //public seriali
     
-}
+//}

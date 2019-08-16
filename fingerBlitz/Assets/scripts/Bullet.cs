@@ -24,10 +24,10 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if(gameManager.destroyAllBullets)
-        {
-            Destroy(gameObject);
-        }
+        //if(gameManager.destroyAllBullets)
+        //{
+        //    Destroy(gameObject);
+        //}
         //gameSpeed = gameManager.gameSpeed;
         transform.Translate(new Vector3(1,0,0)*speed*GameManager.gameSpeed);
         eat(CheckWorldBounds());

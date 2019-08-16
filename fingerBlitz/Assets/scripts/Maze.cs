@@ -64,10 +64,11 @@ public class Maze : MonoBehaviour
             ySize = 8;
 
         }
-        print(complexity);
+        
         ScreenSize = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
-        if (GameControl.control.doGenerateNextLevel == true)
-        {
+        //if (GameControl.control.doGenerateNextLevel == true)
+        //{
+            Random.InitState(GameControl.control.leveltoLoad.randomSeed);
             if (gameObject.GetComponent<AdventureManager>() != null)
             {
                 CreateAdventureWalls();
@@ -80,11 +81,12 @@ public class Maze : MonoBehaviour
             Vector2 CP = calculateCentroid(wl);
             wallHolder.transform.position = wallHolder.transform.position - (new Vector3(CP.x, CP.y, 0));
 
-        }
-        else
-        {
-           restoreWalls(GameControl.control.leveltoLoad.Maze);
-        }
+        //}
+        //else
+        //{
+
+        //   restoreWalls(GameControl.control.leveltoLoad.Maze);
+        //}
 
 
     }
@@ -172,7 +174,7 @@ public class Maze : MonoBehaviour
         }
         CreateCells();
     }
-    MazeContainer mazecont = new MazeContainer();
+  //  MazeContainer mazecont = new MazeContainer();
     void CreateWalls()
     {
         //mazecont.walls = new List<Wall>();
@@ -409,52 +411,52 @@ public class Maze : MonoBehaviour
         //            GetComponent<GameManager>().gameLayout.RandomWalk(GetComponent<GameManager>().StartSector).centroid,
         //            transform.rotation);
     }
-    void restoreWalls(MazeContainer mazecontainr)
-    {
-        complexity = 1 + (GameControl.control.LevelNumber / 10);
+    //void restoreWalls(MazeContainer mazecontainr)
+    //{
+    //    complexity = 1 + (GameControl.control.LevelNumber / 10);
      
-        //xSize = Maze.xSize;// / 6;
-        //ySize = 2 + complexity;
-        wallHolder = new GameObject
-        {
-            name = "Maze",
-            //  tag = "maze"
-        };
-        // wallLength = Camera.main.ViewportToWorldPoint(new Vector2(wallLength.x, wallLength.y));
-        wallLength = (new Vector2((ScreenSize.x / xSize) * 2f, (ScreenSize.y / ySize) * 2f));
-        //wallLength = new Vector2(wallLength.x / xSize, wallLength.y / ySize);
+    //    //xSize = Maze.xSize;// / 6;
+    //    //ySize = 2 + complexity;
+    //    wallHolder = new GameObject
+    //    {
+    //        name = "Maze",
+    //        //  tag = "maze"
+    //    };
+    //    // wallLength = Camera.main.ViewportToWorldPoint(new Vector2(wallLength.x, wallLength.y));
+    //    wallLength = (new Vector2((ScreenSize.x / xSize) * 2f, (ScreenSize.y / ySize) * 2f));
+    //    //wallLength = new Vector2(wallLength.x / xSize, wallLength.y / ySize);
 
 
-        GameObject newWall;
-        foreach (Wall wl in mazecontainr.walls)
-        {
-            if(wl.type ==1)
-            {
-                newWall=   Instantiate(wall, new Vector2(wl.position.x,wl.position.y), Quaternion.Euler(wl.rotation)) as GameObject;
-                Bounds bounds = newWall.GetComponent<SpriteRenderer>().sprite.bounds;
-                float stretchToWorldScale = bounds.size.x;
-                newWall.transform.localScale = new Vector3(wl.scale.x, wl.scale.y, 1);
-                newWall.transform.parent = wallHolder.transform;
-            }
-            if (wl.type == 2)
-            {
-                newWall = Instantiate(Spikeywall, new Vector2(wl.position.x, wl.position.y), Quaternion.Euler(wl.rotation)) as GameObject;
-                Bounds bounds = newWall.GetComponent<SpriteRenderer>().sprite.bounds;
-                float stretchToWorldScale = bounds.size.x;
-                newWall.transform.localScale = new Vector3(wl.scale.x, wl.scale.y, 1);
-                newWall.transform.parent = wallHolder.transform;
-            }
-            if (wl.type == 3)
-            {
-                newWall = Instantiate(lockedWall, new Vector2(wl.position.x, wl.position.y), Quaternion.Euler(wl.rotation)) as GameObject;
-                Bounds bounds = newWall.GetComponent<SpriteRenderer>().sprite.bounds;
-                float stretchToWorldScale = bounds.size.x;
-                newWall.transform.localScale = new Vector3(wl.scale.x, wl.scale.y, 1);
-                newWall.transform.parent = wallHolder.transform;
-            }
-        }
+    //    GameObject newWall;
+    //    foreach (Wall wl in mazecontainr.walls)
+    //    {
+    //        if(wl.type ==1)
+    //        {
+    //            newWall=   Instantiate(wall, new Vector2(wl.position.x,wl.position.y), Quaternion.Euler(wl.rotation)) as GameObject;
+    //            Bounds bounds = newWall.GetComponent<SpriteRenderer>().sprite.bounds;
+    //            float stretchToWorldScale = bounds.size.x;
+    //            newWall.transform.localScale = new Vector3(wl.scale.x, wl.scale.y, 1);
+    //            newWall.transform.parent = wallHolder.transform;
+    //        }
+    //        if (wl.type == 2)
+    //        {
+    //            newWall = Instantiate(Spikeywall, new Vector2(wl.position.x, wl.position.y), Quaternion.Euler(wl.rotation)) as GameObject;
+    //            Bounds bounds = newWall.GetComponent<SpriteRenderer>().sprite.bounds;
+    //            float stretchToWorldScale = bounds.size.x;
+    //            newWall.transform.localScale = new Vector3(wl.scale.x, wl.scale.y, 1);
+    //            newWall.transform.parent = wallHolder.transform;
+    //        }
+    //        if (wl.type == 3)
+    //        {
+    //            newWall = Instantiate(lockedWall, new Vector2(wl.position.x, wl.position.y), Quaternion.Euler(wl.rotation)) as GameObject;
+    //            Bounds bounds = newWall.GetComponent<SpriteRenderer>().sprite.bounds;
+    //            float stretchToWorldScale = bounds.size.x;
+    //            newWall.transform.localScale = new Vector3(wl.scale.x, wl.scale.y, 1);
+    //            newWall.transform.parent = wallHolder.transform;
+    //        }
+    //    }
 
-    }
+    //}
     IEnumerator Spin(GameObject Wall)
     {
         while (true)
