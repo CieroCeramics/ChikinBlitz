@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 public class GameControl : MonoBehaviour
 {
+    
     public static GameControl control;
    // public bool doGenerateNextLevel = true;
     public Level leveltoLoad;
@@ -122,6 +123,8 @@ public class Level
 
     public int number;
     public int randomSeed;
+    public int stage;
+    public int phase;
     //public MazeContainer Maze;
     //public SerializableVector2 start, finish,key;
     //public List<SerializableVector2> lguys;

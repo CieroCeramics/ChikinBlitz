@@ -11,12 +11,12 @@ public class Bullet : MonoBehaviour
         private Transform OOB;
     Plane[] planes;
     public float speed =0.1f;
-    float gameSpeed = 1f;
+    //float gameSpeed = 1f;
     public GameManager gameManager;
     // Start is called before the first frame update
     void Start()
     {
-        gameManager = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+        //gameManager = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
         //dewey = transform.Translate(transform.TransformDirection(-transform.up) * speed);
         planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
     }

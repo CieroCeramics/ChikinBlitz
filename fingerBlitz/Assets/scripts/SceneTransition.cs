@@ -9,9 +9,10 @@ public class SceneTransition : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-
-
-       // foreach( LevelSelect.lSelect.)
+        Time.timeScale = 1;
+        GameControl.control.phasenum = 0;
+        GameControl.control.LevelNumber= 0;
+        // foreach( LevelSelect.lSelect.)
         int stagenum = GameControl.control.Stage;
         if (stagenum > 0)
         {
@@ -69,7 +70,7 @@ public class SceneTransition : MonoBehaviour
     
     void loadNextScene()
     {
-        GameControl.control.phasenum = 0;
+        
         LevelSelect.lSelect.AddStage(GameControl.control.Stage );
       //  LevelSelect.lSelect.addPhase(GameControl.control.phasenum, GameControl.control.Stage);
         //GameControl.control.phasenum++;

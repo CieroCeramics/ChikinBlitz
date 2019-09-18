@@ -45,7 +45,7 @@ public class Maze : MonoBehaviour
 
     void Awake()
     {
-
+        GameControl.control.Stage = GameControl.control.leveltoLoad.stage;
         if (GameControl.control.Stage == 0)
         {
                 xSize = 2;
@@ -214,10 +214,12 @@ public class Maze : MonoBehaviour
                     tempWall = Instantiate(wall, myPos, Quaternion.identity) as GameObject;
                     Bounds bounds = tempWall.GetComponent<SpriteRenderer>().sprite.bounds;
                     float stretchToWorldScale = bounds.size.y;
+                   
                     // print(tempWall.transform.lossyScale);
-                    tempWall.transform.localScale = new Vector3(0.05f, (wallLength.y / stretchToWorldScale), 1);
+                    // tempWall.transform.localScale = new Vector3(0.05f, (wallLength.y / stretchToWorldScale), 1);
+                    tempWall.GetComponent<SpriteRenderer>().size = new Vector2(1.5f, (wallLength.y / stretchToWorldScale)*120);
+                    tempWall.GetComponent<BoxCollider2D>().size = tempWall.GetComponent<SpriteRenderer>().size;
                     tempWall.transform.parent = wallHolder.transform;
-                 
                 }
                 else
                 {
@@ -225,10 +227,12 @@ public class Maze : MonoBehaviour
                     Bounds bounds = tempWall.GetComponent<SpriteRenderer>().sprite.bounds;
                     float stretchToWorldScale = bounds.size.y;
                     // print(tempWall.transform.lossyScale);
-                    tempWall.transform.localScale = new Vector3(0.05f, (wallLength.y / stretchToWorldScale), 1);
+                    //tempWall.transform.localScale = new Vector(0.05f, (wallLength.y / stretchToWorldScale), 1);
+                    tempWall.GetComponent<SpriteRenderer>().size = new Vector2(1.5f, (wallLength.y / stretchToWorldScale)*120);
+                    tempWall.GetComponent<BoxCollider2D>().size = tempWall.GetComponent<SpriteRenderer>().size; tempWall.transform.parent = wallHolder.transform;
                     tempWall.transform.parent = wallHolder.transform;
 
-                    
+
                 }
 
             }
@@ -240,12 +244,14 @@ public class Maze : MonoBehaviour
             for (int j = 0; j < xSize; j++)
             {
                 myPos = new Vector2(initialPos.x + (j * wallLength.x), initialPos.y + (i * wallLength.y) - wallLength.y);
-                if (Random.value > 0.03f)
+                if (Random.value > 0.1f)
                 {
-                    tempWall = Instantiate(Spikeywall, myPos, Quaternion.Euler(0, 0, 90.0f)) as GameObject;
+                    tempWall = Instantiate(wall, myPos, Quaternion.Euler(0, 0, 90.0f)) as GameObject;
                     Bounds bounds = tempWall.GetComponent<SpriteRenderer>().sprite.bounds;
                     float stretchToWorldScale = bounds.size.y;
-                    tempWall.transform.localScale = new Vector3(0.05f, (wallLength.x / stretchToWorldScale), 1);
+                    tempWall.GetComponent<SpriteRenderer>().size = new Vector2(1.5f, (wallLength.y / stretchToWorldScale) * 120);
+                    //tempWall.transform.localScale = new Vector3(0.05f, (wallLength.x / stretchToWorldScale), 1);
+                    tempWall.GetComponent<BoxCollider2D>().size = tempWall.GetComponent<SpriteRenderer>().size;
                     tempWall.transform.parent = wallHolder.transform;
                 }
 
@@ -253,11 +259,13 @@ public class Maze : MonoBehaviour
 
                 else
                 {
-                    tempWall = Instantiate(wall, myPos, Quaternion.Euler(0, 0, 90.0f)) as GameObject;
+                    tempWall = Instantiate(Spikeywall, myPos, Quaternion.Euler(0, 0, 90.0f)) as GameObject;
                     Bounds bounds = tempWall.GetComponent<SpriteRenderer>().sprite.bounds;
                     float stretchToWorldScale = bounds.size.y;
-                    tempWall.transform.localScale = new Vector3(0.05f, (wallLength.x / stretchToWorldScale), 1);
-                    tempWall.transform.parent = wallHolder.transform;    
+                    // tempWall.transform.localScale = new Vector3(2.5f, (wallLength.x / stretchToWorldScale), 1);
+                    tempWall.GetComponent<SpriteRenderer>().size = new Vector2(1.5f, (wallLength.y / stretchToWorldScale) * 120);
+                    tempWall.transform.parent = wallHolder.transform;
+                    tempWall.GetComponent<BoxCollider2D>().size = tempWall.GetComponent<SpriteRenderer>().size; tempWall.transform.parent = wallHolder.transform;
                 }
 
 

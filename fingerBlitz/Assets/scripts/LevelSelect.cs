@@ -112,6 +112,8 @@ public class LevelSelect : MonoBehaviour
             GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum].levels.Add(new Level());
 
             GameControl.control.stagedata[stagenum].phases[phasenum].levels[q].number = GameControl.control.stagedata[GameControl.control.Stage].highestReachedLevel + q;
+            GameControl.control.stagedata[stagenum].phases[phasenum].levels[q].stage = stagenum;
+            GameControl.control.stagedata[stagenum].phases[phasenum].levels[q].phase = phasenum;
             GameControl.control.stagedata[stagenum].phases[phasenum].levels[q].randomSeed = Random.Range(0, 255);
             Level level = GameControl.control.stagedata[stagenum].phases[phasenum].levels[q];
             butt.onClick.AddListener(delegate { loadSelectedLevel(level); });

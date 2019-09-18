@@ -101,7 +101,7 @@ public class LaserGuy : GuyBehavior
                         t = 0;
                             Bullet bulletCopy;
                     int WT = (int)(1 / (GameManager.gameSpeed));
-                    if (k >= WT||GameManager.gameSpeed==1) // GameManager.gameSpeed >= 0.1f)
+                    if (k >= WT||GameManager.gameSpeed==gameManager.maxGameSpeed) // GameManager.gameSpeed >= 0.1f)
                         {
                         k = 0;
                             bulletCopy = Instantiate(bulletPrefab, transform.position, transform.rotation);

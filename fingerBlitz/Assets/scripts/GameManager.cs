@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
 
-    
+
     public Sprite nextLevl;
     public Sprite restart;
     public Sprite Win;
@@ -16,11 +16,11 @@ public class GameManager : MonoBehaviour
     public GameObject winLoseCanvas;
     public GameObject tutorialPanel;
     public GameObject levelSelector;
-
+    public GameObject infoPanel;
 
 
     public static float gameSpeed = 1f;
-    public int maxGameSpeed = 1;
+    public float maxGameSpeed = 1;
     public bool gobackyn;
     //public bool destroyAllBullets;
 
@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
 
 
 
-   
+
     public float numguys = 1;
     public float minComfyDist = 0.3f;
 
@@ -45,7 +45,8 @@ public class GameManager : MonoBehaviour
     public Upgrade upgrade;
 
     bool open;
-    public int mode =1;
+    bool timestopactivate = false;
+    public int mode = 1;
     Vector3 originalPos;
     int difficulty;// = GameControl.control.LevelNumber;
     int timestouched = 0;
@@ -54,26 +55,32 @@ public class GameManager : MonoBehaviour
     public bool itsoverman = false;
     public Level thisLevel;// = new Level();
     // Start is called before the first frame update
+    int stack = 0;
+
+    bool startTimeStop = false;
     private void Awake()
     {
-        
-
+        FSE = GetComponentInChildren<SpriteRenderer>();
+        FSE.gameObject.SetActive(false);
+        Time.timeScale = (1);
     }
+    SpriteRenderer FSE;
     void Start()
     {
+       // GetComponent<AdsManager>().Display_Banner();
         thisLevel = GameControl.control.leveltoLoad;
         GameControl.control.LevelNumber = thisLevel.number;
         gameSpeed = 0;
         LevelSelect.lSelect.gameObject.SetActive(false);
         if (GameControl.control.stagedata.Count == 0)
         {
-            
+
             //GameControl.control.Stage = 0;
             GameControl.control.stagedata.Add(new Stage());
             //GameControl.control.stagedata[GameControl.control.Stage].levels = new List<Level>();
             //GameControl.control.stagedata = new List<Stage>();
         }
-        
+
         Vector2 screenSize;
         screenSize.x = Vector2.Distance(Camera.main.ScreenToWorldPoint(new Vector2(0, 0)), Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0)));// * 0.5; //Grab the world-space position values of the start and end positions of the screen, then calculate the distance between them and store it as half, since we only need half that value for distance away from the camera to the edge
         screenSize.y = Vector2.Distance(Camera.main.ScreenToWorldPoint(new Vector2(0, 0)), Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height)));// * 0.5f;
@@ -81,13 +88,13 @@ public class GameManager : MonoBehaviour
 
         //mode = 1;
         difficulty = GameControl.control.LevelNumber;
-        
+
         originalPos = Camera.main.transform.position;
         int complexity = 1 + (GameControl.control.LevelNumber / 10);
-        
+
         open = true;
         StartCoroutine(OpenCloseInfo());
-        gameLayout = new Partitions(Maze.xSize,Maze.ySize, screenSize);
+        gameLayout = new Partitions(Maze.xSize, Maze.ySize, screenSize);
 
         gameLayout.createSectors();
 
@@ -102,17 +109,17 @@ public class GameManager : MonoBehaviour
         CreateUpgrade();
 
         thisLevel.number = GameControl.control.LevelNumber;
-   
+
 
         player.transform.position = start.transform.position;
 
-       
+
         OpenTutorial(player, ("this is the Chicken, tap and move your finger to control it"));
-       
+
         StartCoroutine(LevelInfoScroll());
 
-    }bool doStartScroll = true;
-  
+    } bool doStartScroll = true;
+
     void newLevel()
     {
 
@@ -120,34 +127,34 @@ public class GameManager : MonoBehaviour
         // thisLevel.Maze = new MazeContainer();
         //thisLevel.Maze.walls = new List<Wall>();
         //thisLevel.Maze = new Maze();
-        
-        
+
+
     }
     void oldSeed()
     {
         Random.InitState(thisLevel.randomSeed);
         //Level thislevel = new Level();
-       
+
     }
     IEnumerator LevelInfoScroll()
-        
+
     {
-        float currentLerp =0f;
+        float currentLerp = 0f;
         float lerpTime = 4f;
         bool pass = false;
         Vector2 curPos = startScroll.GetComponentInChildren<Text>().rectTransform.localPosition;
-        float passingPoint = (Camera.main.ScreenToWorldPoint(new Vector2(Screen.width+10, Screen.height))).x;
+        float passingPoint = (Camera.main.ScreenToWorldPoint(new Vector2(Screen.width + 10, Screen.height))).x;
         while (doStartScroll)
         {
             //curPos = startScroll.GetComponentInChildren<Text>().transform.position;
             currentLerp += Time.deltaTime;
             float perc = currentLerp / lerpTime;
-            if (currentLerp<=lerpTime)
+            if (currentLerp <= lerpTime)
             {
                 perc = Easing.Quadratic.Out(perc);
-                startScroll.GetComponentInChildren<Text>().rectTransform.localPosition =(Vector2.Lerp(new Vector2(curPos.x, curPos.y), new Vector2(Screen.width+10, curPos.y), perc));
+                startScroll.GetComponentInChildren<Text>().rectTransform.localPosition = (Vector2.Lerp(new Vector2(curPos.x, curPos.y), new Vector2(Screen.width + 10, curPos.y), perc));
                 //startScroll.GetComponentInChildren<Text>().transform.Translate(Vector2.Lerp(new Vector2(curPos.x, 0), new Vector2(Screen.width, 0), perc));//right * 10f);// * Easing.Quadratic.InOut(1f));
-               // transform.Translate()
+                // transform.Translate()
                 //currentLerp = 0;
             }
 
@@ -213,11 +220,11 @@ public class GameManager : MonoBehaviour
     }
     void OpenTutorial(GameObject Item, string itemDescription)
     {
-        tutorialPanel.transform.position =Camera.main.WorldToScreenPoint(Item.transform.localPosition);
+        tutorialPanel.transform.position = Camera.main.WorldToScreenPoint(Item.transform.localPosition);
         tutorialPanel.GetComponentInChildren<Text>().text = itemDescription;
 
     }
-    
+
     Partitions.Sector checknplace(GameObject Obj)
     {
 
@@ -226,9 +233,9 @@ public class GameManager : MonoBehaviour
         int rand = Random.Range(0, gameLayout.sectors.Length);
         while (gameLayout.sectors[rand].inhabitants.Count >= 1)
         {
-            
+
             rand = Random.Range(0, gameLayout.sectors.Length);
-            
+
         }
         if (gameLayout.sectors[rand].inhabitants.Count < 1)
         {
@@ -238,28 +245,28 @@ public class GameManager : MonoBehaviour
         return gameLayout.sectors[rand];
     }
 
-   
+
     void DrawZoomCam(float angle, int quadrant)
     {
 
     }
     void CreateGuys()
     {
-        
-       // thisLevel.lguys = new List<SerializableVector2>();
-       // thisLevel.lguys.Clear();
-       // thisLevel.pguys = new List<SerializableVector2>();
-       // thisLevel.pguys.Clear();
+
+        // thisLevel.lguys = new List<SerializableVector2>();
+        // thisLevel.lguys.Clear();
+        // thisLevel.pguys = new List<SerializableVector2>();
+        // thisLevel.pguys.Clear();
         float g = Random.value;
-       
-        
-        if (difficulty %10==0)
+
+
+        if (difficulty % 10 == 0)
         {
-          //  difficulty -= difficulty;
+            //  difficulty -= difficulty;
         }
-        for (int i = 1; i < difficulty%10; i++)
+        for (int i = 1; i < difficulty % 10; i++)
         {
-            if (i < gameLayout.xPartitions * gameLayout.yPartitions-1)
+            if (i < gameLayout.xPartitions * gameLayout.yPartitions - 1)
             {
 
 
@@ -276,11 +283,11 @@ public class GameManager : MonoBehaviour
                     Partitions.Sector spot = new Partitions.Sector();
                     spot = checknplace(pGuy.gameObject);
                     Instantiate(pGuy, spot.centroid, Quaternion.identity);
-                  //  thisLevel.pguys.Add(spot.centroid);
+                    //  thisLevel.pguys.Add(spot.centroid);
                 }
             }
         }
-       
+
     }
 
     public void GameOverCountdown()
@@ -297,56 +304,135 @@ public class GameManager : MonoBehaviour
             while (gameLayout.sectors[rando].centroid == new Vector2(start.transform.position.z, start.transform.position.y))
             { rando = Random.Range(0, gameLayout.sectors.Length); }
             Instantiate(upgrade, gameLayout.sectors[rando].centroid, transform.rotation);
-          //  thisLevel.upgrade = upgrade.gameObject.transform.position ;
+            //  thisLevel.upgrade = upgrade.gameObject.transform.position ;
         }
     }
-   
+
     void CreateStartAndFinish()
     {
         //print("Start");
-        
+
         StartSector = checknplace(start);
         end.GetComponent<Finish>().sectors.Enqueue(StartSector);
+        end.GetComponent<Finish>().PlaceFinish();
         start.transform.position = StartSector.centroid;
-       // thisLevel.start = new Vector2(start.transform.position.x, start.transform.position.y);
+        // thisLevel.start = new Vector2(start.transform.position.x, start.transform.position.y);
         //print("finish");
-        Partitions.Sector endsect = checknplace(end);
-        end.GetComponent<Finish>().createPath(0, end.GetComponent<Finish>().sectors);
-//        print(endsect.distance);
+       // Partitions.Sector endsect = checknplace(end);
+        //end.GetComponent<Finish>().createPath(0, end.GetComponent<Finish>().sectors);
+        //        print(endsect.distance);
         //endsect = checknplace(end);
-            
-        
-        end.transform.position = endsect.centroid;
-       // thisLevel.finish = new Vector2( end.transform.position.x, end.transform.position.y);
-        //  Instantiate(end, new Vector2(Random.Range(-1.7f, 3.7f), Random.Range(-3.5f, 6.5f)), transform.rotation);
-        //start.transform.position = gameLayout.sectors[Random.Range(1, gameLayout.sectors.Length)].centroid; //Randomer();
 
-        //end.transform.position = gameLayout.sectors[Random.Range(0, gameLayout.sectors.Length)].centroid;
-        //if (Vector2.Distance(start.transform.position, end.transform.position) < mindestdist)
-        //{
-        //   // Destroy(end);
-        //    CreateStartAndFinish();
 
-        //}
+       // end.transform.position = endsect.centroid;
+
     }
     public void TimeStop()
     {
-
+        
         if (GameControl.control.times > 0)
         {
-            print("timestopped");
-            maxGameSpeed /= 100;
+            if (timestopactivate) { maxGameSpeed /= 2; stack++; }
+            if (!timestopactivate)
+            {
+                timestopactivate = true;
+                stack++;
+                StartCoroutine(returntonorm());
+                FSE.gameObject.SetActive(true);
+                print("timestopped");
+                maxGameSpeed /= 2;
+                FSE.color = new Color(0.8f, 0.8f, 0, -0.5f);
+            }
             GameControl.control.times--;
         }
 
-        
+
+    }
+    float startTime = 0;
+    int count = 0;
+    float journeyLength = 0;
+    float incrementor3000 = 0;
+    bool openinfo;
+    IEnumerator returntonorm()
+    {
+        while (timestopactivate)
+        {
+
+            if (FSE.color.a < 0.5f && !startTimeStop)
+            {
+                FSE.color += new Color(0f, 0f, 0, 0.05f);
+            }
+            if (Input.touchCount > 0)
+            {
+                Touch touch = Input.GetTouch(0);
+                count++;
+                if (touch.phase == TouchPhase.Began)
+                {
+                    yield return new WaitForEndOfFrame();
+                    print(count + " " + stack);
+                    if (count > stack && !startTimeStop)
+                    {
+
+                        startTime = Time.time;
+                        journeyLength = 1 - (1 / (2 * stack));//Vector2.Distance(transform.position, touchPosition);
+                                                              //Vector2 dirr = new Vector2(transform.position.x, transform.position.y) - new Vector2(touchPosition.x, touchPosition.y);
+                        startTimeStop = true;
+
+                    }
+                }
+
+                if (touch.phase == TouchPhase.Ended)
+                {
+
+
+                }
+                if (startTimeStop)
+                {
+                    float distCovered = (Time.time - startTime) * 0.0002f;
+                    float fracJourney = Easing.Exponential.Out(distCovered / journeyLength);
+
+
+                    maxGameSpeed = Mathf.Lerp(maxGameSpeed, 1, fracJourney);
+                    print("SPEED: " + maxGameSpeed);
+                    if (FSE.color.a > 0.0f)
+                    {
+                        FSE.color -= new Color(0, 0, 0, fracJourney / 2.5f);
+                    }
+                    else { FSE.gameObject.SetActive(false); }
+                    if (maxGameSpeed >= 0.9f)
+                    {
+                        maxGameSpeed = 1;
+                        count = 0; timestopactivate = false; FSE.gameObject.SetActive(false);
+                        startTimeStop = false;
+                        stack = 0;
+                        yield break;
+                    }
+
+                }
+
+            }
+            yield return new WaitForFixedUpdate();
+        }
     }
     // Update is called once per frame
+
     void Update()
     {
+        if (!timestopactivate)
+        {
+            StopCoroutine(returntonorm());
+        }
         if (Input.touchCount > 0)
         {
-            open = false;
+            if (Input.GetTouch(0).phase == TouchPhase.Began)
+            {
+                if (Vector2.Distance(Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position), player.transform.position )< 0.5f)
+                    {
+                    StartCoroutine(OpenUpgradePanel());
+                    openinfo = true;
+                }
+            }
+                open = false;
             if (Input.GetTouch(0).phase == TouchPhase.Ended)
             {
                 open = true;
@@ -405,7 +491,7 @@ public class GameManager : MonoBehaviour
     //}
     public void Died(int lives)
     {
-        
+
     }
     public enum FinishState
     {
@@ -413,17 +499,18 @@ public class GameManager : MonoBehaviour
     };
     Level nextLevel()
     {
-        return GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum].levels[(thisLevel.number+1)%5];
+        return GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum].levels[(thisLevel.number + 1) % 5];
     }
-    public void Finished( FinishState FS, Sprite script, Sprite keepPlaying)
+    public void Finished(FinishState FS, Sprite script, Sprite keepPlaying)
     {
+       // Time.timeScale = (0);
         itsoverman = true;
         //print("THIS +RIUGH HERE" + GameControl.control.stagedata[GameControl.control.Stage].levels.Count + " : " + thisLevel.number);
         gameSpeed = 0;
         int s = GameControl.control.stagedata[GameControl.control.Stage].highestReachedLevel;
         int p = thisLevel.number;
-        bool DGNL = p + 1 > s ? true:false ;
-        print("current phase:" + GameControl.control.phasenum + " max phases" + LevelSelect.lSelect.phase[GameControl.control.Stage].intArray.Length);
+        bool DGNL = p + 1 > s ? true : false;
+        // print("current phase:" + GameControl.control.phasenum + " max phases" + LevelSelect.lSelect.phase[GameControl.control.Stage].intArray.Length);
 
         switch (FS)
         {
@@ -464,11 +551,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case FinishState.DEAD:
-                
+
                 GameControl.control.leveltoLoad = thisLevel;
                 break;
             case FinishState.GAMEOVER:
-                GameControl.control.stagedata[GameControl.control.Stage].highestReachedLevel -= 5;
+                GameControl.control.stagedata[GameControl.control.Stage].highestReachedLevel -= (4 - LevelSelect.lSelect.inactivebuttons.Count);
                 LevelSelect.lSelect.addPhase(GameControl.control.phasenum, GameControl.control.Stage);
                 GameControl.control.leveltoLoad = GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum].levels[0];
                 LevelSelect.lSelect.AddButton(GameControl.control.leveltoLoad);
@@ -477,18 +564,18 @@ public class GameManager : MonoBehaviour
 
         }
 
-        
-       
+
+
         levelCard.gameObject.SetActive(true);
         // next.GetComponentInChildren<Text>().text = outcome;
         //next.GetComponentInChildren<Image>().sprite = tex;
-       // destroyAllBullets = true;
+        // destroyAllBullets = true;
         int min = (int)Time.time / 60;
         int sec = (int)Time.time % 60;
-        levelCard.GetComponentInChildren<Text>().text = "Time:  " + min.ToString()+":"+sec.ToString() + "\n Score:  000000";
+        levelCard.GetComponentInChildren<Text>().text = "Time:  " + min.ToString() + ":" + sec.ToString() + "\n Score:  000000";
         foreach (Image img in levelCard.GetComponentsInChildren<Image>())
         {
-            
+
             if (img.tag == "timeStop")
             {
                 img.GetComponentInChildren<Text>().text = GameControl.control.times.ToString();
@@ -548,24 +635,34 @@ public class GameManager : MonoBehaviour
 
     public virtual void loadLevel(Level leveltoload)
     {
-        gameSpeed = 1;
+        if (5 % (GameControl.control.LevelNumber+1) == 0)
+        {
+            GetComponent<AdsManager>().HandleInterstitialAdEvents(true);
+            GetComponent<AdsManager>().Display_Interstitial();
+        }
+        else
+        {
+            SceneManager.LoadScene("Board");
+        }
+        //gameSpeed = 1;
 
         //leveltoload = GameControl.control.leveltoLoad;
         //seed = GameControl.control.seedToLoad;
         GameControl.control.leveltoLoad = leveltoload;
         GameControl.control.Save();
         //GameControl.control.doGenerateNextLevel = true;
-        SceneManager.LoadScene("Board");
-            
         
     }
+    
+
     void newphase(int num)
     {
         LevelSelect.lSelect.addPhase(num, GameControl.control.Stage);
     }
     public void reloadLevel()
     {
-        GameControl.control.leveltoLoad =thisLevel;
+      
+        GameControl.control.leveltoLoad = thisLevel;
         //GameControl.control.doGenerateNextLevel = false;
         SceneManager.LoadScene("Board");
 
@@ -574,9 +671,61 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         //destroyAllBullets = false;
         player.GetComponent<Animator>().SetBool("Dead", false);
-        
+
     }
 
+    float st;
+    float fl;
+    IEnumerator OpenUpgradePanel()
+    {
+        while (true)
+        {
+            foreach(Text text in infoPanel.GetComponentsInChildren<Text>())
+            {
+                if(text.tag=="fly")
+                {
+                    text.text = GameControl.control.flys.ToString();
+                }
+                if (text.tag == "zoom")
+                {
+                    text.text = GameControl.control.zooms.ToString();
+                }
+                if (text.tag == "timeStop")
+                {
+                    text.text = GameControl.control.times.ToString();
+                }
+                if (text.tag == "life")
+                {
+                    text.text = GameControl.control.lives.ToString();
+                }
+                if(text.tag =="stats")
+                {
+                  //  text.text = "S:"+GameControl.control.Stage+" L:"+GameControl.control.LevelNumber +"\n Time:"
+                }
+            }
+            switch (openinfo)
+            {
+                case true:
+                    if (infoPanel.transform.rotation.z <0)
+                    {
+                        infoPanel.transform.Rotate(0, 0, 200 * Time.deltaTime);
+
+                    }
+                    break;
+                case false:
+
+                    if (infoPanel.transform.rotation.z >-0.9f) 
+                    {
+                        infoPanel.transform.Rotate(0, 0, -200 * Time.deltaTime);
+
+                    }
+                    break;
+            }
+            print(infoPanel.transform.rotation.z);
+           
+            yield return new WaitForEndOfFrame();
+        }
+    }
     IEnumerator OpenCloseInfo()
     {
         while (true)
@@ -646,6 +795,11 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(0);
         }
 
+    }
+    public void openinfoclicked()
+    {
+        print("??");
+        openinfo = false;
     }
 }
 

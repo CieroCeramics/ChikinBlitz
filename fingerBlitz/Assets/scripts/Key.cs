@@ -160,7 +160,7 @@ public class Key : MonoBehaviour
             if (i == 999 && start.centroid == currentSector.centroid)
             {
                 //i -= 1;
-                MonoBehaviour.print("same");
+               // MonoBehaviour.print("same");
             }
         }
         return currentSector;
