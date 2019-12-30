@@ -16,14 +16,16 @@ public class SceneTransition : MonoBehaviour
         int stagenum = GameControl.control.Stage;
         if (stagenum > 0)
         {
+            if(GameControl.control.lives ==0)
+            {
+                GameControl.control.lives = 3;
+            }
             GameControl.control.numUnlockedStages++;
         }
             //if(GameControl.control.stagedata == null)
         if (GameControl.control.stagedata == null)
         {
-            GameControl.control.stagedata = new List<Stage>();
             
-            GameControl.control.lives = 3;
         }
         //  GameControl.control.stagedata = new List<Stage>();
 
@@ -47,7 +49,7 @@ public class SceneTransition : MonoBehaviour
         
        
         
-        LevelSelect.lSelect.addPhase(0,GameControl.control.Stage);
+        LevelSelect.lSelect.addPhase(0,GameControl.control.Stage,true);
         // GameControl.control.Stage++;
          
        // loadNextScene();

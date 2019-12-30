@@ -4,12 +4,24 @@ using UnityEngine;
 
 public class PhaserGuy : GuyBehavior
 {
+    public GameManager gm;
     public float spin;
     // Start is called before the first frame update
     void Start()
     {
+        gm = GameObject.FindWithTag("GameController").GetComponent<GameManager>();
+        if (GameControl.control.Stage == 1)
+        {
+            transform.localScale = new Vector2(transform.localScale.x / 1.5f, transform.localScale.y / 1.5f);
+
+        }
+        if (GameControl.control.Stage == 2)
+        {
+            transform.localScale = new Vector2(transform.localScale.x / 2, transform.localScale.y / 2);
+
+        }
         //gameSpeed = 1;
-     //   StartCoroutine(Phasers1(90f));
+        //   StartCoroutine(Phasers1(90f));
         StartCoroutine(Phasers1(0f));
         StartCoroutine(Phasers1(180f));
         fireRate = 20f;
@@ -42,7 +54,8 @@ public class PhaserGuy : GuyBehavior
             {
                 k = 0;
                 bulletCopy = Instantiate(bulletPrefab, transform.position, transform.rotation * (Quaternion.Euler(0, 0, dir)));
-                bulletCopy.speed = 0.02f;
+                bulletCopy.dims = gm.screenSize;
+                // bulletCopy.speed = 0.02f;
 
             }
             yield return new WaitForFixedUpdate();// WaitFor.Frames((int)((1 / GameManager.gameSpeed )*fireRate ));
@@ -62,7 +75,8 @@ public class PhaserGuy : GuyBehavior
             {
 
                 bulletCopy = Instantiate(bulletPrefab, transform.position, transform.rotation * (Quaternion.Euler(0, 0, 90)));
-                bulletCopy.speed = 0.005f;
+                bulletCopy.dims = gm.gameLayout.Dimensions;
+                // bulletCopy.speed = 0.005f;
             }
 
         }

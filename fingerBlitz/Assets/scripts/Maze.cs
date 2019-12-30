@@ -18,7 +18,7 @@ public class Maze : MonoBehaviour
 
 
     public GameObject Spikeywall;
-    public GameObject lockedWall;
+   // public GameObject lockedWall;
     public GameObject wall;
     public Vector2 wallLength = new Vector2(63.0f, 63.0f);
 
@@ -64,11 +64,18 @@ public class Maze : MonoBehaviour
             ySize = 8;
 
         }
-        
+        if (GameControl.control.Stage == 3)
+        {
+            xSize = 5;
+            ySize = 10;
+
+        }
+
+
         ScreenSize = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
         //if (GameControl.control.doGenerateNextLevel == true)
         //{
-            Random.InitState(GameControl.control.leveltoLoad.randomSeed);
+           Random.InitState(GameControl.control.leveltoLoad.randomSeed);
             if (gameObject.GetComponent<AdventureManager>() != null)
             {
                 CreateAdventureWalls();
@@ -178,7 +185,7 @@ public class Maze : MonoBehaviour
     void CreateWalls()
     {
         //mazecont.walls = new List<Wall>();
-        complexity = 1 + (GameControl.control.LevelNumber / 10);
+       // complexity = 1 + (GameControl.control.LevelNumber / 10);
         // wallLength.x = complexity;// Camera.main.ViewportToScreenPoint(new Vector3(complexity, complexity)) ;
         // wallLength.y = complexity;
         //xSize = 1 + complexity;// / 6;
@@ -323,13 +330,13 @@ public class Maze : MonoBehaviour
                 if (cells[currentNeighbour].visited == false && cells[currentCell].visited == true)
                 {
                     float r = Random.value;
-                    if (r > 0.05)
-                    {
+                    //if (r > 0.05)
+                    //{
                         BreakWall();
 
-                    }
+                    //}
 
-                    else LockWall();
+                    //else LockWall();
 
                     cells[currentNeighbour].visited = true;
                     visitedCells++;
@@ -383,42 +390,42 @@ public class Maze : MonoBehaviour
                 StartCoroutine(Spin(cells[currentCell].south)); break;
         }
     }
-    void LockWall()
-    {
-        GameObject key;
-        GameObject Lock;
-        //print("spinwalled");
-        switch (wallToBreak)
-        {
-            case 1:
-                Lock = Instantiate(lockedWall, transform.position, transform.rotation);
+    //void LockWall()
+    //{
+    //    GameObject key;
+    //    GameObject Lock;
+    //    //print("spinwalled");
+    //    switch (wallToBreak)
+    //    {
+    //        case 1:
+    //            Lock = Instantiate(lockedWall, transform.position, transform.rotation);
 
 
-                Lock.transform.parent = cells[currentCell].north.transform;
-                Lock.transform.localPosition = new Vector2(0, 0);
-                // cells[currentCell].north.GetComponent<GameObject>().Equals ( lockedWall); 
-                break;
-            case 2:
-                Lock = Instantiate(lockedWall, transform.position, transform.rotation);
-                Lock.transform.parent = cells[currentCell].east.transform;
+    //            Lock.transform.parent = cells[currentCell].north.transform;
+    //            Lock.transform.localPosition = new Vector2(0, 0);
+    //            // cells[currentCell].north.GetComponent<GameObject>().Equals ( lockedWall); 
+    //            break;
+    //        case 2:
+    //            Lock = Instantiate(lockedWall, transform.position, transform.rotation);
+    //            Lock.transform.parent = cells[currentCell].east.transform;
 
-                Lock.transform.localPosition = new Vector2(0, 0);
-                break;
-            case 3:
-                Lock = Instantiate(lockedWall, transform.position, transform.rotation);
-                Lock.transform.parent = cells[currentCell].west.transform;
-                Lock.transform.localPosition = new Vector2(0, 0);
-                break;
-            case 4:
-                Lock = Instantiate(lockedWall, transform.position, transform.rotation);
-                Lock.transform.parent = cells[currentCell].south.transform;
-                Lock.transform.localPosition = new Vector2(0, 0);
-                break;
-        }
-        //key = Instantiate(GetComponent<GameManager>().key,
-        //            GetComponent<GameManager>().gameLayout.RandomWalk(GetComponent<GameManager>().StartSector).centroid,
-        //            transform.rotation);
-    }
+    //            Lock.transform.localPosition = new Vector2(0, 0);
+    //            break;
+    //        case 3:
+    //            Lock = Instantiate(lockedWall, transform.position, transform.rotation);
+    //            Lock.transform.parent = cells[currentCell].west.transform;
+    //            Lock.transform.localPosition = new Vector2(0, 0);
+    //            break;
+    //        case 4:
+    //            Lock = Instantiate(lockedWall, transform.position, transform.rotation);
+    //            Lock.transform.parent = cells[currentCell].south.transform;
+    //            Lock.transform.localPosition = new Vector2(0, 0);
+    //            break;
+    //    }
+    //    //key = Instantiate(GetComponent<GameManager>().key,
+    //    //            GetComponent<GameManager>().gameLayout.RandomWalk(GetComponent<GameManager>().StartSector).centroid,
+    //    //            transform.rotation);
+    //}
     //void restoreWalls(MazeContainer mazecontainr)
     //{
     //    complexity = 1 + (GameControl.control.LevelNumber / 10);
@@ -485,7 +492,7 @@ public class Maze : MonoBehaviour
         check -= 1;
         check *= xSize;
         check += xSize;
-        //west
+        //east
         if (currentCell + 1 < totalCells && (currentCell + 1) != check)
         {
             if (cells[currentCell + 1].visited == false)
@@ -496,7 +503,7 @@ public class Maze : MonoBehaviour
             }
         }
 
-        //east
+        //west
         if (currentCell - 1 >= 0 && currentCell != check)
         {
             if (cells[currentCell - 1].visited == false)

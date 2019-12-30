@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1959886424104625657}
   - component: {fileID: -7129538716522184927}
   - component: {fileID: 3761530729622143862}
+  - component: {fileID: 5593978901126111827}
   m_Layer: 10
   m_Name: LaserGuy
   m_TagString: guy
@@ -53,7 +54,6 @@ MonoBehaviour:
     type: 3}
   spread: 0
   fireRate: 0.5
-  bulletSpeed: 0
   weaponCase: 0
   playa: {fileID: 4404132293612377447, guid: 30004a13863bf364dbd79a7d4e8ef08e, type: 3}
   LaserHit: {fileID: 3233472748177735638}
@@ -68,7 +68,7 @@ BoxCollider2D:
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_UsedByEffector: 1
+  m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
@@ -83,6 +83,54 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!212 &5593978901126111827
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1959886424104625660}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 4, y: 5}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 0
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &2876898977961123491
 GameObject:
   m_ObjectHideFlags: 0
@@ -93,6 +141,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2637302514144147895}
   - component: {fileID: 2377942393573560071}
+  - component: {fileID: 1764483232306912920}
   m_Layer: 10
   m_Name: New Sprite
   m_TagString: Untagged
@@ -107,13 +156,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2876898977961123491}
-  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.161528}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: -0.25, y: 0.05, z: 0}
+  m_LocalScale: {x: 0.3120085, y: 0.3120085, z: 0.3120085}
   m_Children: []
   m_Father: {fileID: 1959886424104625657}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!212 &2377942393573560071
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -151,7 +200,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 21300000, guid: 9fdd2b7ceda148c4bb48ea2015e116ce, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 23bfa3575b489a74e8c2d46dbaa6c35a, type: 3}
   m_Color: {r: 0.8867924, g: 0.5978162, b: 0.09620863, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -162,6 +211,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &1764483232306912920
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2876898977961123491}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d59ab7fe0a7a3de49acfe3cd00855dbf, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &5130982262421120310
 GameObject:
   m_ObjectHideFlags: 0
@@ -252,7 +320,6 @@ GameObject:
   - component: {fileID: 8937933757903034610}
   - component: {fileID: 2030200605999045975}
   - component: {fileID: 8093978249307183034}
-  - component: {fileID: 6309873104767784143}
   m_Layer: 10
   m_Name: Laser
   m_TagString: Untagged
@@ -268,8 +335,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6012543212154766057}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 6.51, y: -0, z: 0}
-  m_LocalScale: {x: 0.33, y: 0.7985425, z: 1.3562553}
+  m_LocalPosition: {x: 12.571, y: 0.032, z: 0}
+  m_LocalScale: {x: 0.9583053, y: 1.6094663, z: 1.3562553}
   m_Children: []
   m_Father: {fileID: 1959886424104625657}
   m_RootOrder: 2
@@ -341,18 +408,3 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!111 &6309873104767784143
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6012543212154766057}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Animation: {fileID: 0}
-  m_Animations: []
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0

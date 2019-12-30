@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using UnityEngine.EventSystems;
-public class DragMove : MonoBehaviour//, IPointerDownHandler
+public class DragMove : MonoBehaviour //IPointerDownHandler
 {
     public GameObject radial;
     public GameManager gameManager;
@@ -25,97 +25,146 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
     Vector2 StoredPosition;
     public Animator animator;
     private TrailRenderer trailrenderer;
+    public Button OpenMenuB;
     int stack = 0;
+    public Partitions.Sector curSec;
     void Start()
     {
-       
+        if (GameControl.control.Stage ==2)
+        {
+            transform.localScale = new Vector2(transform.localScale.x / 3, transform.localScale.y / 3);
+
+        }
+        if (GameControl.control.Stage == 0)
+        {
+            transform.localScale = new Vector2(transform.localScale.x / 1.5f, transform.localScale.y / 1.5f);
+
+        }
+        if (GameControl.control.Stage == 1)
+        {
+            transform.localScale = new Vector2(transform.localScale.x / 2, transform.localScale.y / 2);
+
+        }
         trailrenderer = GetComponent<TrailRenderer>();
         radial.SetActive(false);
         animator = GetComponent<Animator>();
-        //gameSpeed = gameManager.gameSpeed;
+    
         StoredPosition = transform.position;
         Time.timeScale = 1f;
 
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.enabled = false;
-        //firsttouch = false;
+        
         addPhysics2DRaycaster();
         rb = GetComponent<Rigidbody2D>();
-
+      //  Camera.main.eventMask =~( (1 << 10)|(1<<2)) ;
         ///Physics2D.IgnoreRaycastLayer()
     }
-
+  
     public bool playerclicked = false;
     bool slowdown = false;
     private void Update()
     {
-
+                            OpenMenuB.gameObject.SetActive(!playerclicked);
     }
     Vector2 mouseRelativeOrigin;
     int c = 0;
     Vector2 tempOrigin;
+    public enum ControlStyle
+    {
+        FINGER, CHICKEN, STATIONARY
+    };
+    ControlStyle getControl ()
+    {
+        int n = GameControl.control.controlType;
+        ControlStyle r = ControlStyle.FINGER;
+           switch (n)
+        {
+            case 1:
+                r = ControlStyle.FINGER;
+                break;
+            case 2:
+                r = ControlStyle.CHICKEN;
+                break;
+            case 3:
+                r = ControlStyle.STATIONARY;
+                break;
+        }
+        return r;
+    }
     private void FixedUpdate()
     {
-
+        curSec = gameManager.gameLayout.getSectorFromVector(transform.position, gameManager.gameLayout.sectors);
+        if (Input.GetKeyDown("space"))
+        {
+            WinAutomatically();
+        }
         //Time.timeScale
-        Vector2 dir;
+        Vector2 dir =Vector2.zero;
         float speed = Vector2.Distance(StoredPosition, transform.position) / Time.deltaTime * 100000000f;
 
         thumbStop.transform.position = transform.position;
-        //if (Input.GetMouseButtonDown(0))
+              if (gameManager.itsoverman)
+            {
+            GameManager.gameSpeed = 0;
+            }
         //{
-        //    radial.SetActive(true);
-        //    radial.transform.position = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
-        //    playerclicked = true;
-        //    // tempOrigin = Input.mousePosition;
-        //    mouseRelativeOrigin = Input.mousePosition;
-        //    // print("click");
-        //    Path.Enqueue(Input.mousePosition);
-        //    lineRenderer.SetPosition(0, new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y));
-        //}
-        //if (Input.GetMouseButton(0))
-        //{
-        //    // print("clickING!!!!!");
-
-        //    c++;
-        //    if (c > 5)
+        //    if (Input.GetMouseButtonDown(0))
         //    {
-        //        if (Vector2.Distance(mouseRelativeOrigin, Input.mousePosition) > 250)
+        //        radial.SetActive(true);
+        //        radial.transform.position = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
+        //        playerclicked = true;
+        //        // tempOrigin = Input.mousePosition;
+        //        mouseRelativeOrigin = Input.mousePosition;
+        //        // print("click");
+        //        Path.Enqueue(Input.mousePosition);
+        //        lineRenderer.SetPosition(0, new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y));
+        //        lineRenderer.SetPosition(0, new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y));
+        //    }
+        //    if (Input.GetMouseButton(0))
+        //    {
+        //        // print("clickING!!!!!");
+
+        //        c++;
+        //        if (c > 5)
         //        {
-        //            Path.Enqueue(tempOrigin);
-        //            //if (Path.Count > 1)
-        //            //{
+        //            if (Vector2.Distance(mouseRelativeOrigin, Input.mousePosition) > 250)
+        //            {
+        //                Path.Enqueue(tempOrigin);
+        //                //if (Path.Count > 1)
+        //                //{
         //                mouseRelativeOrigin = Input.mousePosition;//Path.Dequeue();
-        //                radial.transform.position = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y,0);
+        //                radial.transform.position = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
         //                //radial.transform.position.z = 0;
         //                lineRenderer.SetPosition(0, new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y));
-        //            //}
-        //            c = 0;
+        //                //}
+        //                c = 0;
+        //            }
         //        }
+        //        if (!gameManager.itsoverman)
+        //        {
+        //            GameManager.gameSpeed = 1;
+        //        }
+        //        StopCoroutine(SlowDown());
+        //        //mouseRelativeOrigin = Input.mousePosition;
+        //        // origin = Input.mousePosition;
+        //        moveSpeed = Vector2.Distance(mouseRelativeOrigin, Input.mousePosition);
+        //        dir = (new Vector2(Input.mousePosition.x, Input.mousePosition.y) - mouseRelativeOrigin).normalized;
+        //        lineRenderer.SetPosition(1, new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y));
+        //        transform.Translate(dir * Time.deltaTime * moveSpeed * 0.008f);
+
+        //        tempOrigin = Input.mousePosition;
         //    }
-        //    if (!gameManager.itsoverman)
+
+        //    if (Input.GetMouseButtonUp(0))
         //    {
-        //        GameManager.gameSpeed = 1;
+        //        radial.SetActive(false);
+        //        Path.Clear();
+        //        c = 0;
+        //        slowdown = true;
+        //        StartCoroutine(SlowDown());
+
         //    }
-        //    StopCoroutine(SlowDown());
-        //    //mouseRelativeOrigin = Input.mousePosition;
-        //    // origin = Input.mousePosition;
-        //    moveSpeed = Vector2.Distance(mouseRelativeOrigin, Input.mousePosition);
-        //    dir = (new Vector2(Input.mousePosition.x, Input.mousePosition.y) - mouseRelativeOrigin).normalized;
-        //    lineRenderer.SetPosition(1, new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y));
-        //    transform.Translate(dir * Time.deltaTime * moveSpeed*0.008f);
-
-        //    tempOrigin = Input.mousePosition;
-        //}
-
-        //if (Input.GetMouseButtonUp(0))
-        //{
-        //    radial.SetActive(false);
-        //    Path.Clear();
-        //    c = 0;
-        //    slowdown = true;
-        //    StartCoroutine(SlowDown());
-
         //}
         if (Input.touchCount > 0 && !zoomz && !IsPointerOverUIObject())
         {
@@ -123,10 +172,10 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
             {
                 GameManager.gameSpeed = gameManager.maxGameSpeed;
             }
-
+  
             if (flyin)
             {
-                print(flytime);
+              //  print(flytime);
                 flytime--;
                 float mft = stack * 100;
                 FullSreenEffect.color -= new Color(0f, 0f, 0f, 0.5f / (mft * 2));
@@ -144,69 +193,153 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
 
             StopCoroutine(SlowDown());
             Touch touch = Input.GetTouch(0);
-
+            ControlStyle cs =getControl();
+            
+           
             if (touch.phase == TouchPhase.Began)
+            {
+
+                mouseRelativeOrigin = touch.position;
+                radial.SetActive(true);
+                switch (cs)
+                {
+                    case ControlStyle.FINGER:
+                        radial.transform.position = touch.position;
+                      //  radial.transform.position = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
+                        lineRenderer.SetPosition(0, new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y));
+
+                        break;
+                    case ControlStyle.STATIONARY:
+                        radial.transform.position = touch.position; ;// new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
+                        lineRenderer.SetPosition(0, new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y));
+
+                        break;
+                    case ControlStyle.CHICKEN:
+                        radial.transform.position =Camera.main.WorldToScreenPoint( transform.position);
+                        lineRenderer.SetPosition(0, transform.position); 
+
+                        break;
+                }
+                
+                    lineRenderer.startColor = Color.black;
+                lineRenderer.startWidth = 0.012f;
+                playerclicked = true;
+                //StartCoroutine(TraceFinger());
+
+                fingerup = false;
+           
+            }
+                           if (fingerup)
             {
                 mouseRelativeOrigin = touch.position;
                 radial.SetActive(true);
-                radial.transform.position = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
-                lineRenderer.SetPosition(0, new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y));
+                switch (cs)
+                {
+                    case ControlStyle.FINGER:
+                        radial.transform.position = touch.position;
+                        //  radial.transform.position = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
+                        lineRenderer.SetPosition(0, new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y));
+
+                        break;
+                    case ControlStyle.STATIONARY:
+                        radial.transform.position = touch.position; ;// new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x, Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
+                        lineRenderer.SetPosition(0, new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y));
+
+                        break;
+                    case ControlStyle.CHICKEN:
+                        radial.transform.position = Camera.main.WorldToScreenPoint(transform.position);
+                        lineRenderer.SetPosition(0, transform.position);
+
+                        break;
+                }
                 lineRenderer.startColor = Color.black;
                 lineRenderer.startWidth = 0.012f;
                 playerclicked = true;
                 //StartCoroutine(TraceFinger());
-                
-               
-                //    print("click");
-                //Path.Enqueue(touch.position);
-            }
 
+                fingerup = false;
+            }
+            {
+
+            }
             touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
             touchPosition.z = 0;
             Vector2 touchPos = new Vector2(touchPosition.x, touchPosition.y);
             animator.SetFloat("Speed", 1);
-            //  print("speed " + speed + " distance " + Vector2.Distance(transform.position, StoredPosition));
+            
 
 
             if (playerclicked)
             {
+                GetComponent<Animator>().SetBool("Dizzy", false);
                 slowdown = false;
 
-
+                mouseRelativeOrigin = radial.transform.position;
                 StopCoroutine(ZoomTo());
                 lineRenderer.enabled = true;
                 trailrenderer.enabled = false;
                 c++;
-                Vector2 MRE = new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y);
-                dir = (touchPos - MRE).normalized;
-                if (c > 2)
+                Vector2 MRE;
+             
+                switch (cs)
                 {
-                    if (Vector2.Distance(mouseRelativeOrigin, touch.position) > 250)
-                    {
-                        //Path.Enqueue(touch.position);
-                        // if (Path.Count > 1)
-                        // {
-                        mouseRelativeOrigin =new Vector2(Camera.main.WorldToScreenPoint(radial.transform.position).x,Camera.main.WorldToScreenPoint(radial.transform.position).y);// Path.Dequeue();
-                        radial.transform.Translate(dir*Time.deltaTime* Vector2.Distance(mouseRelativeOrigin, touch.position)*0.05f);
-                        lineRenderer.SetPosition(0, radial.transform.position );
-                        //  }
-                        c = 0;
-                    }
+                    case ControlStyle.FINGER:
+                         MRE = new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y);
+                        dir = (touchPos - MRE).normalized;
+                            if (Vector2.Distance(mouseRelativeOrigin, touch.position) > radial.transform.localScale.x*50)
+                            {
+                            mouseRelativeOrigin = radial.transform.position;
+                                radial.transform.Translate(dir * Time.deltaTime * Vector2.Distance(mouseRelativeOrigin, touch.position) );
+                                lineRenderer.SetPosition(0, Camera.main.ScreenToWorldPoint(radial.transform.position));
+                                c = 0;
+                        }
+                        break;
+                    case ControlStyle.STATIONARY:
+                        MRE=  new Vector2(Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).x, Camera.main.ScreenToWorldPoint(mouseRelativeOrigin).y);
+                        dir = (touchPos - MRE).normalized;
+                        dir = (touchPos - MRE).normalized;                                         
+                        if (c > 2)
+                        {
+                            if (Vector2.Distance(mouseRelativeOrigin, touch.position) > 250 * radial.transform.localScale.x)
+                            {
+                            
+                                mouseRelativeOrigin = new Vector2(Camera.main.WorldToScreenPoint(radial.transform.position).x, Camera.main.WorldToScreenPoint(radial.transform.position).y);// Path.Dequeue();
+                               
+                                lineRenderer.SetPosition(0, Camera.main.ScreenToWorldPoint(radial.transform.position));
+                             
+                                c = 0;
+                            }
+                        }
+                        break;
+
+                    case ControlStyle.CHICKEN:
+                        MRE =transform.position;
+                        dir = (touchPos - MRE).normalized;
+                        //if (c > 2)
+                        //{
+                          if (Vector2.Distance(mouseRelativeOrigin, touch.position) > 250 * radial.transform.localScale.x)
+                            {
+                          
+                                radial.transform.position =Camera.main.WorldToScreenPoint( transform.position);
+                                mouseRelativeOrigin = new Vector2(Camera.main.WorldToScreenPoint(radial.transform.position).x, Camera.main.WorldToScreenPoint(radial.transform.position).y);// Path.Dequeue();
+                                                                                                                                                                                            // radial.transform.Translate(dir * Time.deltaTime * Vector2.Distance(mouseRelativeOrigin, touch.position) * 0.05f);
+                                lineRenderer.SetPosition(0, transform.position);
+                              }
+          
+                        break;
                 }
 
-               
-                moveSpeed =Mathf.Clamp(Vector2.Distance(mouseRelativeOrigin, touch.position),0,250);
-                //  print(moveSpeed);
-                lineRenderer.SetPosition(1, touchPosition);
+
+               // print(Vector2.Distance(mouseRelativeOrigin, touch.position));
+                moveSpeed =Mathf.Clamp(Vector2.Distance(mouseRelativeOrigin, touch.position)/gameManager.scrollbar.value,0,100);
+                lineRenderer.SetPosition(0, Camera.main.ScreenToWorldPoint(radial.transform.position));
+                lineRenderer.SetPosition(1, touchPos);
                 transform.Translate(dir * Time.deltaTime * moveSpeed * 0.008f);
 
                 tempOrigin = touch.position;
-                //firsttouch = true;
+              
 
-
-                //;lgameManager.maxGameSpeed;
-                //    if (Path.Count > 0)
-                //    {
+           
 
                 direction = (new Vector2(touch.position.x, touch.position.y) - mouseRelativeOrigin);
 
@@ -220,20 +353,7 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
                     GetComponent<SpriteRenderer>().flipX = false;
                 }
 
-                //    Vector2 smoothLerp = Vector2.Lerp(transform.position, Path.Peek(), moveSpeed * Time.deltaTime);
-                //    transform.position = smoothLerp;
-                //    //transform.Translate(new Vector2(direction.x, direction.y) * moveSpeed);
-                //    if(Vector2.Distance(transform.position,Path.Peek())<=0.1f)
-                //    {
-                //        Path.Dequeue();
-                //    }
-                //    //if (Vector2.Distance(Path.Peek(),touchPosition)>0.01)
-                //    //    {
-                //    //        Path.Enqueue(touchPosition);
-                //    //    }
-                //    lineRenderer.SetPosition(0, transform.position);
-                //    lineRenderer.SetPosition(1, touchPos);
-                //}
+                
             }
             if (touch.phase == TouchPhase.Ended)
             {
@@ -247,17 +367,38 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
                 Path.Clear();
                 lineRenderer.enabled = false;
                 c = 0;
+                fingerup = true;
+                radial.SetActive(false);
                 // StopCoroutine(TraceFinger());
             }
             // rb.velocity = Vector2.zero;
             // StoredPosition = transform.position;
-
+            
+        }
+        if (Input.touchCount == 0 )
+        {
+            if (!fingerup)
+            {
+                slowdown = true;
+                //up = down = left = right = false;
+                //print(gameSpeed);
+                playerclicked = false;
+                StartCoroutine(SlowDown());
+                GetComponent<Animator>().SetFloat("Speed", 0);
+                //GetComponentInChildren<ParticleSystem>().Play();
+                Path.Clear();
+                lineRenderer.enabled = false;
+                c = 0;
+                fingerup = true;
+            }
         }
 
 
-
     }
-
+      public void WinAutomatically()
+    {
+         transform.position = gameManager.end.transform.position;                
+    }
     public struct lerpInfo
     {
         float start;
@@ -277,6 +418,8 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
   
 
     GameObject curLine;
+    bool fingerup=true;
+    Vector2 tp;
     IEnumerator ZoomTo()
     {
 
@@ -284,7 +427,7 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
         {
      
             
-            print(start);
+           // print(start);
             if (FullSreenEffect.color.a < 0.5f)
             {
                 FullSreenEffect.color += new Color(0, 0, 0, 0.05f);
@@ -292,13 +435,13 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
      
             if (!IsPointerOverUIObject() && Input.touchCount > 0)
             {
-                
-                print( "not touching UI ");
+               
+             //   print( "not touching UI ");
                 Touch touch = Input.GetTouch(0);
                 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
 
                 Vector2 touchPos = new Vector2(touchPosition.x, touchPosition.y);
-
+                tp = touchPos;
                 if (touch.phase == TouchPhase.Began)
                 {
                    Vector2 dir = touchPos - oldtouch;
@@ -317,15 +460,37 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
                     }
                     curLine = lineclone;
                     start = false;
+                    fingerup = false;
                 }
 
-               
+                if(fingerup)
+                {
+                    Vector2 dir = touchPos - oldtouch;
+                    GameObject lineclone;
+                    if (linebin.Grab(out lineclone))
+                    {
+
+                        lineclone.transform.position = oldtouch;
+                        lineclone.transform.rotation = Quaternion.Euler(dir);
+                        lineclone.SetActive(true);
+                    }
+                    else
+                    {
+
+                        lineclone = Instantiate(linearprojection, oldtouch, Quaternion.Euler(dir));
+                    }
+                    curLine = lineclone;
+                    start = false;
+                    fingerup = false;
+
+                }
                
                 if (!IsPointerOverUIObject())
                 {
                     Ray2D ray = new Ray2D(oldtouch, touchPos - oldtouch);
                     float dist = Vector2.Distance(oldtouch, touchPos);
                     Vector2 dir = touchPos - oldtouch;// new Vector2(touchPos.x - transform.position.x , touchPos.y- transform.position.y );
+                   layerMask =(1 << 13);
                     RaycastHit2D hit = Physics2D.Raycast(oldtouch, dir, dist, layerMask);
 
                     float angle = (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg)-90f;
@@ -337,7 +502,7 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
                     {
                         curLine.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0.009137154f);
                         Vector2 dir2 = new Vector2(hit.collider.transform.position.x, hit.collider.transform.position.y) - hit.point;
-                        print(hit.collider.tag);
+                   //     print(hit.collider.tag);
 
                        
                         Debug.DrawRay(oldtouch, dir2, Color.red);
@@ -359,8 +524,8 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
                 }
                 if (touch.phase == TouchPhase.Ended)
                 {
-                    yield return new WaitForEndOfFrame();
-                    print(count + " " + stack);
+                    
+           //         print(count + " " + stack);
                     
                         if (clearPath)
                         {
@@ -382,13 +547,45 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
                         linebin.Store(curLine);
                        
                     }
-                    
-
+                    fingerup = true;
+                    yield return new WaitForEndOfFrame();
+                   
                 }
 
-
+               
             }
-          
+            if(Input.touchCount == 0)
+            {
+                if (fingerup == false)
+                {
+                    if (clearPath)
+                    {
+                        zoomqueue.Enqueue(tp);
+                        count++;
+                        if (zoomqueue.Count >= stack)
+                        {
+
+                            startTime = Time.time;
+                            journeyLength = Vector2.Distance(transform.position, touchPosition);
+                            Vector2 dirr = new Vector2(transform.position.x, transform.position.y) - new Vector2(touchPosition.x, touchPosition.y);
+                            start = true;
+                        }
+                        oldtouch = tp;
+                    }
+
+                    else
+                    {
+                        linebin.Store(curLine);
+
+                    }
+                    fingerup = true;
+                    yield return new WaitForEndOfFrame();
+
+               }
+                
+                }
+            
+
             if (start)
             {
                
@@ -433,7 +630,16 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
         PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
         eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
         List<RaycastResult> results = new List<RaycastResult>();
+
         EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        if (results.Count > 0)
+        {
+         //   print(results[0].gameObject.tag);
+        if(results[0].gameObject.tag == "Player"  || results[0].gameObject.tag == "Respawn" || results[0].gameObject.tag == "guy" || results[0].gameObject.tag == "thumbstop" || results[0].gameObject.tag == "ScoreAdder" || results[0].gameObject.tag == "laser" || results[0].gameObject.tag == "Finish")
+        {
+            return false; 
+        }
+    }
         return results.Count > 0;
     }
     IEnumerator SlowDown()
@@ -458,21 +664,7 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
             else { yield return null; }
         }
     }
-    public bool up, down, left, right;
-    //void OnPointerDown(PointerEventData eventData)
-    //{
-    //    if (up) { transform.Translate(new Vector2(0, 1) * moveSpeed); }
-    //    if (down) { transform.Translate(new Vector2(0, -1) * moveSpeed); }
-    //    if (left) { transform.Translate(new Vector2(-1, 0) * moveSpeed); }
-    //    if (right) { transform.Translate(new Vector2(1, 0) * moveSpeed); }
-    //    if (eventData.pointerCurrentRaycast.gameObject.name == "trysmt")
-    //    {
-    //        playerclicked = true;
-    //        GetComponentInChildren<ParticleSystem>().Stop();
-    //    }
-    //    else playerclicked = false;
-    //    //  Debug.Log("Clicked: " + eventData.pointerCurrentRaycast.gameObject.name);
-    //}
+
 
     Vector2 normalizeToDirection(Vector2 inputDir, Collider2D WallBounds)
     {
@@ -510,11 +702,13 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
 
     public void Zoom()
     {
+
+        AdventureBag.aBag.zooms = 5;
         Touch touch = Input.GetTouch(0);
 
         if (touch.phase == TouchPhase.Ended)
         {
-            if (GameControl.control.zooms > 0)
+            if (AdventureBag.aBag.zooms > 0)
             {
                 if (zoomz) { stack++; }
                 if (!zoomz)
@@ -528,14 +722,14 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
                     FullSreenEffect.color = new Color(0.3176471f, 0.6705883f, 1, 0.5f);
                 }
 
-                GameControl.control.zooms--;
+                AdventureBag.aBag.zooms--;
             }
         }
     }
     int flytime = 0;
     public void Fly()
     {
-        if (GameControl.control.flys > 0)
+        if (AdventureBag.aBag.flys > 0)
         {
             if (!flyin)
             {
@@ -550,64 +744,75 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
                 stack++;
                 flytime += 100;
             }
-            print("fkying");
+         //   print("fkying");
 
             gameObject.layer = LayerMask.NameToLayer("FlyingPlayer");
-            GameControl.control.flys--;
+            AdventureBag.aBag.flys--;
         }
     }
 
 
-    public void goUP()
-    {
-        up = true; down = false;
-    }
-    public void goDOWN()
-    {
-        down = true; up = false;
-    }
-    public void goLeft()
-    {
-        left = true; right = false;
-    }
-    public void goRight()
-    {
-        right = true; left = false;
-    }
+
     bool isdamaged = false;
+
+    void hm()
+    {
+        gameManager.hideMultiplier();
+    }
     public void OnCollisionEnter2D(Collision2D other)
     {
+
       //  print(other.gameObject.tag);
         //Physics2D.IgnoreCollision(thumbStop.GetComponent<Collider2D>(), GetComponent<Collider2D>());
         if (other.gameObject.tag == "key")
         {
-            GameControl.control.keys++;
+            gameManager.levelScore += 1000;
+            GameControl.control.key=true;
             Destroy(other.gameObject);
         }
         if (other.gameObject.tag == "timeStop")
         {
-            GameControl.control.times++;
+            gameManager.levelScore += 1000;
+            AdventureBag.aBag.times++;
             Destroy(other.gameObject);
         }
         if (other.gameObject.tag == "life")
         {
+            gameManager.levelScore += 1000;
             GameControl.control.lives++;
             Destroy(other.gameObject);
         }
         if (other.gameObject.tag == "zoom")
         {
-            GameControl.control.zooms++;
+            gameManager.levelScore += 1000;
+            AdventureBag.aBag.zooms++;
             Destroy(other.gameObject);
         }
         if (other.gameObject.tag == "fly")
         {
-            GameControl.control.flys++;
+            gameManager.levelScore += 1000;
+            AdventureBag.aBag.flys++;
+            Destroy(other.gameObject);
+        }
+        if (other.gameObject.tag == "ScoreAdder")
+        {
+            gameManager.levelScore += 1000;
+ 
+            Destroy(other.gameObject);
+        }
+
+        if (other.gameObject.tag == "Chickie")
+        {
+         //   print("chickie");
+            gameManager.levelScore*=2;
+            gameManager.Scoretextmultiplier.gameObject.SetActive(true);
+            Invoke("hm",2);
             Destroy(other.gameObject);
         }
         if (other.gameObject.tag == "lock")
         {
 
-            if (GameControl.control.keys > 0)
+            if (GameControl.control.key)
             {
                 Destroy(other.gameObject.transform.parent.gameObject);
             }
@@ -616,28 +821,65 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
         }
         if (other.gameObject.tag == "wall" && !flyin)
         {
+            if (other.contacts[0].otherCollider.transform.gameObject.name == "trysmt")
+            {
 
-            playerclicked = false;
-            transform.Translate(normalizeToDirection(transform.position, other.collider) * 0.2f);
+
+                Physics2D.IgnoreCollision(thumbStop.GetComponentInChildren<Collider2D>(), other.gameObject.GetComponent<Collider2D>());
+                //    print("Frantic");
+                GetComponent<Animator>().SetBool("Frantic", true);
 
 
+            }
+            else
+            {
+                playerclicked = false;
+                GetComponent<Animator>().SetBool("Dizzy", true);
+                transform.Translate(normalizeToDirection(transform.position, other.collider) * 0.05f);
+            }
         }
 
+        if (other.gameObject.tag==("Respawn"))
+        {
+             if (other.contacts[0].otherCollider.transform.gameObject.name == "trysmt")
+            {
+                Physics2D.IgnoreCollision(thumbStop.GetComponentInChildren<Collider2D>(), other.gameObject.GetComponent<Collider2D>());
+
+                
+            }
+        }
         if (other.gameObject.tag == ("Finish"))
         {
             // print("hit");
             //Time.timeScale = 0f;
             //StartCoroutine(gameManager.screenPulse());
-            slowdown = false;
-            GameManager.gameSpeed = 0;
-            gameManager.gobackyn = false;
-            if (other.contacts[0].otherCollider.transform.gameObject.name == "trysmt")
+            if (gameManager.thisLevel.number%5!=4)
             {
-                Physics2D.IgnoreCollision(thumbStop.GetComponentInChildren<Collider2D>(), other.gameObject.GetComponent<Collider2D>());
+                slowdown = false;
+                GameManager.gameSpeed = 0;
 
-                gameManager.Finished(GameManager.FinishState.ALIVE, gameManager.Win, gameManager.nextLevl);
+                gameManager.gobackyn = false;
+                if (other.contacts[0].otherCollider.transform.gameObject.name == "trysmt")
+                {
+                    Physics2D.IgnoreCollision(thumbStop.GetComponentInChildren<Collider2D>(), other.gameObject.GetComponent<Collider2D>());
+
+                    gameManager.Finished(GameManager.FinishState.ALIVE, gameManager.Win);
+                }
             }
+            else if  (gameManager.thisLevel.number % 5 == 4 && GameControl.control.key==true)
+            {
+                slowdown = false;
+                GameManager.gameSpeed = 0;
+                GameControl.control.key = false;
+                gameManager.gobackyn = false;
+                if (other.contacts[0].otherCollider.transform.gameObject.name == "trysmt")
+                {
+                    Physics2D.IgnoreCollision(thumbStop.GetComponentInChildren<Collider2D>(), other.gameObject.GetComponent<Collider2D>());
 
+                    gameManager.Finished(GameManager.FinishState.ALIVE, gameManager.PhaseComplete);
+                }
+            }
+            else transform.Translate((transform.position - other.transform.position) * 0.2f);
         }
 
 
@@ -661,7 +903,11 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
                 {
                     //Time.timeScale = (0);
                     isdamaged = true;
+                    playerclicked = false;
+                    slowdown = false;
                     GameManager.gameSpeed = 0;
+                    gameManager.maxGameSpeed = 0;
+                    
                     //Time.timeScale = 0f;
                     GetComponent<Animator>().SetBool("Dead", true);
                     
@@ -673,17 +919,18 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
                         GameControl.control.LevelNumber = 0;
                         // Physics.IgnoreCollision(other.gameObject.GetComponent<Collider>(), GetComponent<Collider>());
                         Invoke("dotheInvoke", 1);
-                        Physics.IgnoreCollision(other.gameObject.GetComponent<Collider>(), GetComponent<Collider>());
+                        Physics2D.IgnoreCollision(other.gameObject.GetComponent<Collider2D>(), GetComponent<Collider2D>());
 
-                        GameControl.control.lives = 3;
+                      //  GameControl.control.lives = 3;
                     }
                     else
                     {
                         Invoke("dotheInvoke2", 1);
                         
-                        GameControl.control.lives--;
+                        
+                        
 
-                        Physics.IgnoreCollision(other.gameObject.GetComponent<Collider>(), GetComponent<Collider>());
+                      //  Physics.IgnoreCollision(other.gameObject.GetComponent<Collider>(), GetComponent<Collider>());
                         gameManager.gobackyn = true;
                         //GameControl.control.seedToLoad = gameManager.thisSeed;
 
@@ -697,11 +944,11 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
     }
     public void dotheInvoke()
     {
-        gameManager.Finished(GameManager.FinishState.GAMEOVER, gameManager.GameOver, null);
+        gameManager.Finished(GameManager.FinishState.GAMEOVER, gameManager.GameOver);
     }
     void dotheInvoke2()
     {
-        gameManager.Finished(GameManager.FinishState.DEAD, gameManager.Lose, gameManager.restart);
+        gameManager.Finished(GameManager.FinishState.DEAD, gameManager.Lose);
     }
     public void OnCollisionExit2D(Collision2D other)
     {
@@ -714,6 +961,18 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
         //}
     }
 
+    public void OnCollisionStay2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "wall" && flyin)
+        {
+            Physics2D.IgnoreCollision(thumbStop.GetComponentInChildren<Collider2D>(), other.gameObject.GetComponent<Collider2D>());
+        }
+            //if (other.contacts[0].otherCollider.transform.gameObject.name == "trysmt")
+            //{
+            //   print("not Frantic");
+
+            //}
+        }
 
 
 
@@ -723,7 +982,7 @@ public class DragMove : MonoBehaviour//, IPointerDownHandler
 
 
 
-  
+
 }
 public static class hasComponent
 {

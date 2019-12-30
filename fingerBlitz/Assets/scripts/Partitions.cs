@@ -14,6 +14,7 @@ public class Partitions // int xp, int yp, Vector2 p
         xPartitions = xParts;
         yPartitions = yParts;
         Dimensions = dimensions;
+        totalPartitions = xPartitions * yPartitions;
     }
 
 
@@ -28,17 +29,17 @@ public class Partitions // int xp, int yp, Vector2 p
         public int number;
         public int distance;
         public bool visited = false;
-        public GameObject constraints;  
+        public bool partOfPath;  
     }
     public GameObject t;
     public Sector[] sectors;
     // Start is called before the first frame update
     void Start()
     {
-        int complexity = 1 + (GameControl.control.LevelNumber / 10);
+        //int complexity = 1 + (GameControl.control.LevelNumber / 10);
         xPartitions = Maze.xSize;// 1 + complexity;// / 6;
         yPartitions = Maze.xSize;// 2 + complexity;
-        totalPartitions = xPartitions * yPartitions;
+       
         //if (GameControl.control.LevelNumber<5)
         //{
         //    xPartitions = 2;
@@ -49,7 +50,7 @@ public class Partitions // int xp, int yp, Vector2 p
         //    xPartitions = 3;
         //    yPartitions = 4;
         //}
-       // createSectors();
+        // createSectors();
     }
 
 
@@ -106,13 +107,7 @@ public class Partitions // int xp, int yp, Vector2 p
           
 
     }
-    //this codes gonne be importnt some day
-    //int check = 0;
-    //check = ((currentCell + 1) / xSize);
-    //                    check -= 1;
-    //                    check *= xSize;
-    //                    check += xSize;
-  
+
 
     public Sector RandomWalk2(Sector start, int minDist)
     {
@@ -227,5 +222,22 @@ public class Partitions // int xp, int yp, Vector2 p
             return true;
 
         else return false;
+    }
+    public Sector getSectorFromVector(Vector2 v, Sector[] p)
+    {
+        Sector rsec; 
+        foreach(Sector s in p )
+        {
+            if (s.west <= v.x &&
+                s.east >= v.x   &&
+                 s.south <= v.y   &&
+                 s.north >= v.y
+                )                          
+            {
+            return s; 
+            }
+            
+        }
+        return null;
     }
 }

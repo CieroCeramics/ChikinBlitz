@@ -367,13 +367,13 @@ public class AdventureManager : GameManager
 
 
 
-    public override void loadLevel(Level leveltoload)
-    {
+    //public  void loadLevel(Level leveltoload)
+    //{
 
         
-       SceneManager.LoadScene("AdventureBoard");
+    //   SceneManager.LoadScene("AdventureBoard");
 
-    }
+    //}
     //public void reloadLevel()
     //{
 

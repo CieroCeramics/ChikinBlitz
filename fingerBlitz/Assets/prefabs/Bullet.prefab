@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2913511431544035753}
   - component: {fileID: 2913511431544035752}
   - component: {fileID: 2913511431544035759}
+  - component: {fileID: 9180906119365757997}
   m_Layer: 9
   m_Name: Bullet
   m_TagString: laser
@@ -27,8 +28,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2913511431544035758}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.2387613}
+  m_LocalPosition: {x: 0.00072, y: -0.00002, z: 0}
+  m_LocalScale: {x: 0.07806383, y: 0.07806383, z: 0.18638623}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -45,8 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10c6a16f988b98347acf83bd905af02d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
-  gameManager: {fileID: 0}
+  type: 0
+  acceleration: 0.000002
+  gameManager: {fileID: 8738331905541739642, guid: 8a3490ee45fd19a42a02fbc9fbc33c0b,
+    type: 3}
 --- !u!212 &2913511431544035752
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -110,4 +113,23 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.16
+  m_Radius: 1.12
+--- !u!95 &9180906119365757997
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2913511431544035758}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5e7d123a36475b346ab5f478149775c6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

@@ -21,7 +21,7 @@ public class GuyBehavior : MonoBehaviour
    
    
     public float fireRate = 0.5f;
-    public float bulletSpeed;
+    //public float bulletSpeed;
     public int weaponCase=0;
 
     public GameObject playa;
@@ -29,6 +29,16 @@ public class GuyBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (GameControl.control.Stage == 1)
+        {
+            transform.localScale = new Vector2(transform.localScale.x / 1.5f, transform.localScale.y / 1.5f);
+
+        }
+        if (GameControl.control.Stage == 2)
+        {
+            transform.localScale = new Vector2(transform.localScale.x / 2, transform.localScale.y / 2);
+
+        }
         gameManager = playa.GetComponent<DragMove>().gameManager;
         playa = GameObject.FindGameObjectWithTag("Player");
 

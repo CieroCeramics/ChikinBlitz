@@ -23,6 +23,15 @@ TagManager:
   - levelSelect
   - thumbstop
   - line
+  - Chickie
+  - ScoreAdder
+  - lnum
+  - NewScoreText
+  - LevelScoreText
+  - CountdownText
+  - fbag
+  - zbag
+  - tbag
   layers:
   - Default
   - TransparentFX

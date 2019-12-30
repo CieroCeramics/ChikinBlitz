@@ -61,10 +61,10 @@ public class Key : MonoBehaviour
                         if (hit.collider != null)
                         {
                             Vector2 dir2 = hit.point - new Vector2(hit.collider.transform.position.x, hit.collider.transform.position.y);
-                            Debug.DrawRay(currentSector.centroid, dir2, Color.red, Mathf.Infinity);
-                            Debug.DrawRay(currentSector.centroid, Vector2.up, Color.green, Mathf.Infinity);
-                            print(hit.collider.tag);
-                            print("Did Hit");
+                            //Debug.DrawRay(currentSector.centroid, dir2, Color.red, Mathf.Infinity);
+                            //Debug.DrawRay(currentSector.centroid, Vector2.up, Color.green, Mathf.Infinity);
+                            //print(hit.collider.tag);
+                            //print("Did Hit");
                         }
 
                         else if (hit.collider == null)
@@ -84,10 +84,10 @@ public class Key : MonoBehaviour
                         if (hit.collider != null)
                         {
                             Vector2 dir2 = hit.point - new Vector2(hit.collider.transform.position.x, hit.collider.transform.position.y);
-                            Debug.DrawRay(currentSector.centroid, dir2, Color.red, Mathf.Infinity);
-                            Debug.DrawRay(currentSector.centroid, Vector2.down, Color.green, Mathf.Infinity);
-                            print(hit.collider.tag);
-                            print("Did Hit");
+                            //Debug.DrawRay(currentSector.centroid, dir2, Color.red, Mathf.Infinity);
+                            //Debug.DrawRay(currentSector.centroid, Vector2.down, Color.green, Mathf.Infinity);
+                            //print(hit.collider.tag);
+                            //print("Did Hit");
                         }
 
                         else
@@ -110,10 +110,10 @@ public class Key : MonoBehaviour
                         if (hit.collider != null)
                         {
                             Vector2 dir2 = hit.point - new Vector2(hit.collider.transform.position.x, hit.collider.transform.position.y);
-                            Debug.DrawRay(currentSector.centroid, dir2, Color.red, Mathf.Infinity);
-                            Debug.DrawRay(currentSector.centroid, Vector2.right, Color.green, Mathf.Infinity);
-                            print(hit.collider.tag);
-                            print("Did Hit");
+                            //Debug.DrawRay(currentSector.centroid, dir2, Color.red, Mathf.Infinity);
+                            //Debug.DrawRay(currentSector.centroid, Vector2.right, Color.green, Mathf.Infinity);
+                            //print(hit.collider.tag);
+                            //print("Did Hit");
                         }
 
                         else
@@ -136,10 +136,10 @@ public class Key : MonoBehaviour
                         if (hit.collider != null)
                         {
                             Vector2 dir2 = hit.point - new Vector2(hit.collider.transform.position.x, hit.collider.transform.position.y);
-                            Debug.DrawRay(currentSector.centroid, dir2, Color.red, Mathf.Infinity);
-                            Debug.DrawRay(currentSector.centroid, Vector2.left, Color.green, Mathf.Infinity);
-                            print(hit.collider.tag);
-                            print("Did Hit");
+                            //Debug.DrawRay(currentSector.centroid, dir2, Color.red, Mathf.Infinity);
+                            //Debug.DrawRay(currentSector.centroid, Vector2.left, Color.green, Mathf.Infinity);
+                            //print(hit.collider.tag);
+                            //print("Did Hit");
                         }
 
                         else

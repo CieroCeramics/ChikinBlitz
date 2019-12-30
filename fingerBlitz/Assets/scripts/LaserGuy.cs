@@ -5,6 +5,7 @@ using UnityEngine;
 public class LaserGuy : GuyBehavior
 {
 
+    public GameManager gm;
    // Color linecolor = new Color(0, 1, 1, 0);
     int status = 1;
 
@@ -16,16 +17,17 @@ public class LaserGuy : GuyBehavior
     //gameSpeed =1;
     void Awake()
     {
+        gm= GameObject.FindWithTag("GameController").GetComponent<GameManager>();
         playa = GameObject.FindGameObjectWithTag("Player");
         Anim = GetComponentInChildren<Animator>();
-        StartCoroutine(Lasers());
-
+        StartCoroutine(Lasers2());
+         fireRate = 20f;
     }
 
-    void OnBecameVisible()
-    {
-        StartCoroutine(Lasers());
-    }
+    // void OnBecameVisible()
+    // {
+    //     StartCoroutine(Lasers2());
+    // }
     private void OnBecameInvisible()
     {
         //StopCoroutine(Lasers());
@@ -33,6 +35,8 @@ public class LaserGuy : GuyBehavior
     // Update is called once per frame
     void Update()
     {
+        if(Anim)
+         Anim.speed = GameManager.gameSpeed;
         //gameSpeed = GameObject.FindGameObjectWithTag("Player").GetComponent<DragMove>().gameSpeed;
     }
 
@@ -51,7 +55,8 @@ public class LaserGuy : GuyBehavior
         {
     
             if (status >= 4) { status = 1; }
-            Anim.speed = GameManager.gameSpeed;
+           
+            //print (Anim.speed);
             // em.rate ;
             //  lineRenderer.startColor = linecolor;
             //  lineRenderer.endColor = linecolor;
@@ -74,7 +79,7 @@ public class LaserGuy : GuyBehavior
 
                       case 1://charging
 
-                      
+                      Anim.gameObject.GetComponent<Animator>().enabled = true;
                         // get the angle
                       //  Anim.Play("laser");
                         //particles.Simulate(t);
@@ -86,16 +91,17 @@ public class LaserGuy : GuyBehavior
 
                         Vector3 res = LaserHit.position - transform.position;
                 
-                        if (Anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !Anim.IsInTransition(0))
+                        if (Anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1 && !Anim.IsInTransition(0))
                         {
-                            Anim.Play("cooldown", 0, 0.0f);
-                            status++;
+                             Anim.SetBool("Fire", true);
+                            // Anim.Play("cooldown", 0, 0.0f);
+                            status=2;
                         }
 
                         break;
 
                         case 2://fire
-                        Anim.SetBool("Fire", true);
+                        
                     k++;
                         //Anim.speed = 0;
                         t = 0;
@@ -105,29 +111,33 @@ public class LaserGuy : GuyBehavior
                         {
                         k = 0;
                             bulletCopy = Instantiate(bulletPrefab, transform.position, transform.rotation);
+                        bulletCopy.type = 2;
                             bullets.Add(bulletCopy);
-                            bulletCopy.speed = 0.1f;
+                           //bulletCopy.speed = 0.1f;
                         }
-                        if (bullets.Count >= 100)
+                        if (bullets.Count >= 50)
                         {
-                            Anim.speed = 1;
-                            status++;
+                            //Anim.speed = 1;
+                            status=3;
                             bullets = new List<Bullet>();
                         }
-
+                       // 
                         break;
                          case 3://cooldown
                        // Anim.StopPlayback();
                         // particles2.Stop();
                       
                         //Anim.speed = 0;
-                        if (bullets.Count <10)
-                        {
+                          if (Anim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1 && !Anim.IsInTransition(0))
+                       {
                             Anim.SetBool("Fire", false);
                             // Anim.speed = 1;
                             Anim.Play("Laser", 0, 0.0f);
                             status = 1;
+                            Anim.gameObject.GetComponent<Animator>().enabled = false;
+                             //eld return new WaitForSeconds(4f);
                         }
+                       
                         break;
                         
 
@@ -161,6 +171,38 @@ public class LaserGuy : GuyBehavior
 
         }
         yield return null;
+    }
+    IEnumerator Lasers2()
+    {
+        int k = 0;
+       
+        while(true)
+        {
+            k++;
+            Bullet bulletCopy;
+             int WT = (int)(1 / (GameManager.gameSpeed) * fireRate);
+             if (k >= WT && GameManager.gameSpeed>0)
+            {
+                k = 0;
+                bulletCopy = Instantiate(bulletPrefab, transform.position, transform.rotation);
+                bulletCopy.type = 2;
+                bulletCopy.dims = gm.screenSize;
+                //   bulletCopy.speed = 0.02f;
+
+            }
+            Vector2 dir = playa.transform.position - transform.position;
+                        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+         //  Rotation a = new Rotation(0,0,angle);
+                        Quaternion a = Quaternion.Euler(0,0,angle);
+                        Quaternion b =Quaternion.Euler(0,0,Mathf.Sin(Time.time*4f));
+                        Quaternion c =a*b;
+           //Rotation  b = new Rotation(0,0,Mathf.Sin(Time.time*4f));
+                   //     
+           transform.rotation=Quaternion.Euler(0,0,angle)*Quaternion.Euler(0,0,Mathf.Sin(Time.time*2f)*30f);
+           //transform.Rotate(0,0,Mathf.Sin(Time.time*4f));
+             yield return new WaitForFixedUpdate();
+
+        }
     }
 }
 

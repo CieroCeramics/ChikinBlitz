@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,11 +6,18 @@ using UnityEngine.SceneManagement;
 
 public class TitleManager : MonoBehaviour
 {
+    
+    public LevelSelect levelselect;
+    public AdventureBag adventurebag;
     // Start is called before the first frame update
+   // public LevelSelect levelSelect;
     void Start()
     {
-        
+        GameControl.control.Load();
+                          
+
         //GameControl.control.Load();
+       // GameControl.control.updateinfo();
 
         // StartCoroutine(OpenTitle());
     }
@@ -28,6 +35,7 @@ public class TitleManager : MonoBehaviour
     void LoadPreviousSession()
     {
         //if(locationisopen)
+       
 
     }
     void FixedUpdate()
@@ -39,15 +47,34 @@ public class TitleManager : MonoBehaviour
     }
     public void STARTClASSIC()
     {
-        GameControl.control.lives = 3;
-        if (GameControl.control.stagedata == null)
-        {
-            GameControl.control.Stage = 0;
-            
-           
-        }
-        SceneManager.LoadScene("TransitionScene");
 
+
+        if (GameControl.control.fileExists)
+        {
+            if(LevelSelect.lSelect==null)
+            {
+                LevelSelect.lSelect = levelselect;
+                AdventureBag.aBag = adventurebag;
+            }
+            LevelSelect.lSelect.gameObject.SetActive(true);//LevelSelect.lSelect.gameObject.SetActive(true);
+            LevelSelect.lSelect.loadStagedata();
+
+            print(GameControl.control.leveltoLoad.number);
+
+
+        }
+
+        else
+        {
+            GameControl.control.stagedata = new List<Stage>();
+            GameControl.control.controlType = 1;
+            GameControl.control.lives = 3;
+            GameControl.control.Stage = 0;
+                              SceneManager.LoadScene("TransitionScene");
+
+        }
+
+        
     }
     public void STARTADVENTURE()
     {

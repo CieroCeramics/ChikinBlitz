@@ -9,6 +9,16 @@ public class Upgrade : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (GameControl.control.Stage == 1)
+        {
+            transform.localScale = new Vector2(transform.localScale.x / 1.5f, transform.localScale.y / 1.5f);
+
+        }
+        if (GameControl.control.Stage == 2)
+        {
+            transform.localScale = new Vector2(transform.localScale.x / 2, transform.localScale.y / 2);
+
+        }
         spriteR = gameObject.GetComponent<SpriteRenderer>();
         DecideWhoYouAre();
         switch (identity)
@@ -28,6 +38,14 @@ public class Upgrade : MonoBehaviour
             case 4:
                 gameObject.tag = "life";
                 spriteR.sprite = Resources.Load<Sprite>("Life");
+                return;
+            case 5:
+                gameObject.tag = "ScoreAdder";
+                spriteR.sprite = Resources.Load<Sprite>("upscore");
+                return;
+            case 6:
+                gameObject.tag = "key";
+                spriteR.sprite = Resources.Load<Sprite>("key");
                 return;
         }
 
@@ -57,12 +75,12 @@ public class Upgrade : MonoBehaviour
     private void DecideWhoYouAre()
     {
         float Destiny = Random.value;
-       // print(Destiny);
-        if ((Destiny<0.3f)&&(Destiny>=0f))
+        // print(Destiny);
+        if ((Destiny < 0.3f) && (Destiny >= 0f))
         {
             identity = 1;
         }
-        else if (Destiny < 0.6f&& Destiny>=0.3f)
+        else if (Destiny < 0.6f && Destiny >= 0.3f)
         {
             identity = 2;
         }
@@ -71,6 +89,19 @@ public class Upgrade : MonoBehaviour
             identity = 3;
         }
         else identity = 4;
+        if (GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum].levels[GameControl.control.LevelNumber%5].complete)
+        {
+            identity = 5;
+        }
+        if(GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum].keyLevel == 
+            GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum].levels[GameControl.control.LevelNumber % 5].number%5)
+        {
+            identity = 6;
+        }
+        if (GameControl.control.stagedata[GameControl.control.Stage].phases[GameControl.control.phasenum].completed)
+        {
+            identity = 5;
+        }
     }
     private void GetDressed()
     {
